@@ -18,3 +18,4 @@ C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\De
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.pdb
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.genruntimeconfig.cache
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\ref\Koridor.dll
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.sourcelink.json

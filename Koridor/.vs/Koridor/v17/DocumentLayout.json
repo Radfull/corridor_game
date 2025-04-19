@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\mainclasses.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\mainclasses.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +30,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
+              "Title": "MainClasses.cs",
+              "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainClasses.cs",
+              "RelativeDocumentMoniker": "Koridor\\MainClasses.cs",
+              "ToolTip": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainClasses.cs",
+              "RelativeToolTip": "Koridor\\MainClasses.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-19T07:34:57.07Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainWindow.xaml",
               "RelativeDocumentMoniker": "Koridor\\MainWindow.xaml",
@@ -38,13 +55,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "Koridor\\MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainWindow.xaml.cs",
               "RelativeToolTip": "Koridor\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAEMAAAAAAAAAAAAuwGAAAAAvAAAAAAAAAA==",
+              "ViewState": "AgIAACQAAAAAAAAAAAAYwA0AAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-18T12:51:01.611Z",
               "EditorCaption": ""

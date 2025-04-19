@@ -16,8 +16,15 @@ namespace Koridor
         double canvasHeight;
         double cellWidth;
         double cellHeight;
-        int DashMargin;
-        int DashLenght;
+
+        Chess BlueChess = new Chess();
+        Chess RedChess = new Chess();
+        Ellipse BlueChessElp = new Ellipse();
+        Ellipse RedChessElp = new Ellipse();
+
+        bool SelectedChess;
+
+
 
         public MainWindow()
         {
@@ -41,21 +48,17 @@ namespace Koridor
             cellWidth = canvasWidth / cols;
             cellHeight = canvasHeight / rows;
 
-            DashMargin = (int)(cellHeight * 0.25);
-            DashLenght = (int)(cellHeight * 0.5);
-
             // Вертикальные линии
             for (int i = 0; i <= cols; i++)
             {
                 Line line = new Line()
                 {
                     X1 = cellWidth * i,
-                    Y1 = DashMargin,
+                    Y1 = 0,
                     X2 = cellWidth * i,
                     Y2 = canvasHeight,
                     Stroke = Brushes.Red,
                     StrokeThickness = 2,
-                    StrokeDashArray = new DoubleCollection() { DashLenght, DashMargin } // Задаем штриховые линии (длина линии, растояние между линиями)
                 };
                 canvas.Children.Add(line);
                 vertLines.Add(line);
@@ -66,17 +69,36 @@ namespace Koridor
             {
                 Line line = new Line()
                 {
-                    X1 = DashMargin,
+                    X1 = 0,
                     Y1 = cellHeight * i,
                     X2 = canvasWidth,
                     Y2 = cellHeight * i,
                     Stroke = Brushes.Red,
                     StrokeThickness = 2,
-                    StrokeDashArray =  new DoubleCollection() { DashLenght, DashMargin } // Задаем штриховые линии (длина линии, растояние между линиями)
                 };
                 canvas.Children.Add(line);
                 horizontLines.Add(line);
             }
+
+            //BlueChessElp.Width = cellWidth;
+            //BlueChessElp.Height = cellHeight;
+            //BlueChessElp.Fill = new SolidColorBrush(Colors.Blue);
+            //BlueChessElp.Margin = new Thickness(cellWidth * 4.5,0,0,0);
+
+            //RedChessElp.Width = cellWidth;
+            //RedChessElp.Height = cellHeight;
+            //RedChessElp.Fill = new SolidColorBrush(Colors.Blue);
+            //RedChessElp.Margin = new Thickness(cellWidth * 4.5, canvasHeight - 0.5 * cellHeight, 0, 0);
+
+
+            BlueChess.red = false;
+            BlueChess.posX = 5;
+            BlueChess.posY = 0;
+
+            RedChess.red = true;
+            RedChess.posX = 5;
+            RedChess.posY = 9;
+
         }
 
         private void UpdateGrid()
@@ -86,8 +108,6 @@ namespace Koridor
             cellWidth = canvasWidth / cols;
             cellHeight = canvasHeight / rows;
 
-            DashMargin = (int)(cellHeight * 0.25);
-            DashLenght = (int)(cellHeight * 0.5);
 
             // Обновление вертикальных линий
             for (int i = 0; i < vertLines.Count; i++)
@@ -95,7 +115,6 @@ namespace Koridor
                 vertLines[i].X1 = cellWidth * i;
                 vertLines[i].X2 = cellWidth * i;
                 vertLines[i].Y2 = canvasHeight;
-                vertLines[i].StrokeDashArray = new DoubleCollection() { DashLenght, DashMargin };
             }
 
             // Обновление горизонтальных линий
@@ -104,8 +123,29 @@ namespace Koridor
                 horizontLines[i].Y1 = cellHeight * i;
                 horizontLines[i].Y2 = cellHeight * i;
                 horizontLines[i].X2 = canvasWidth;
-                horizontLines[i].StrokeDashArray = new DoubleCollection() { DashLenght, DashMargin };
             }
+
+
+            BlueChessElp.Width = cellWidth;
+            BlueChessElp.Height = cellHeight;
+            BlueChessElp.Fill = new SolidColorBrush(Colors.Blue);
+            BlueChessElp.Margin = new Thickness(cellWidth * 4, 0, 0, 0);
+
+            RedChessElp.Width = cellWidth;
+            RedChessElp.Height = cellHeight;
+            RedChessElp.Fill = new SolidColorBrush(Colors.Red);
+            RedChessElp.Margin = new Thickness(cellWidth * 4, canvasHeight - cellHeight, 0, 0);
+
+            if(canvas.Children.Contains(BlueChessElp)) canvas.Children.Remove(BlueChessElp); canvas.Children.Remove(RedChessElp);
+            canvas.Children.Add(BlueChessElp);
+            canvas.Children.Add(RedChessElp);
+            //BlueChess.red = false;
+            //BlueChess.posX = 5;
+            //BlueChess.posY = 0;
+
+            //RedChess.red = true;
+            //RedChess.posX = 5;
+            //RedChess.posY = 9;
         }
     }
 }
