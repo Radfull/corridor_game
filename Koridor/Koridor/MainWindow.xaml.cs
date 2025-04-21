@@ -253,38 +253,27 @@ namespace Koridor
                 {
                     SelectedChess = true;
                     SelectedChessObject = BlueChess;
+                    HighlightAvailableMoves(GetAvailableMoves(clickedX, clickedY));
                 }
                 else if (clickedX == RedChess.posX && clickedY == RedChess.posY && currentPlayer)
                 {
                     SelectedChess = true;
                     SelectedChessObject = RedChess;
+                    HighlightAvailableMoves(GetAvailableMoves(clickedX, clickedY));
                 }
             }
             else
             {
-                if (clickedX == SelectedChessObject.posX && clickedY == SelectedChessObject.posY) return; // клик по своей же фишке
-                if (IsMoveValid(SelectedChessObject.posX, SelectedChessObject.posY, clickedX, clickedY))
+                var possibleMoves = GetAvailableMoves(SelectedChessObject.posX, SelectedChessObject.posY);
+                if (possibleMoves.Contains((clickedX, clickedY)))
                 {
-                    if ((clickedX == BlueChess.posX && clickedY == BlueChess.posY) || (clickedX == RedChess.posX && clickedY == RedChess.posY)) //занято ли поле
-                    {
-                        if (IsMoveValid(clickedX, clickedY, clickedX + (clickedX - SelectedChessObject.posX), clickedY + (clickedY - SelectedChessObject.posY)))
-                        {
-                            Log($"Moved to ({clickedX + (clickedX - SelectedChessObject.posX)},{clickedY + (clickedY - SelectedChessObject.posY)})");
-                            MoveChess(SelectedChessObject, clickedX + (clickedX - SelectedChessObject.posX), clickedY + (clickedY - SelectedChessObject.posY));
-                        };
-                    }
-                    else
-                    {
                         MoveChess(SelectedChessObject, clickedX, clickedY);
                         Log($"Moved to ({clickedX}, {clickedY})");
-                    }
                     currentPlayer = !currentPlayer;
                     Log($"Current player: {(currentPlayer ? "red" : "blue")}");
                 }
 
-
-
-                // Сброс выбора фишки
+                ClearHighlights();
                 SelectedChess = false;
                 SelectedChessObject = null;
             }
@@ -329,6 +318,60 @@ namespace Koridor
                 newCell.Children.Add(chess.red ? RedChessElp : BlueChessElp);
             }
         }
+        private List<(int x, int y)> GetAvailableMoves(int startX, int startY)
+        {
+            var possibleMoves = new List<(int x, int y)>();
 
+            var directions = new List<(int dx, int dy)> // Возможные направления
+            {
+                (0, -1), (0, 1), (-1, 0), (1, 0)
+            };
+            
+            foreach (var (dx, dy) in directions)
+            {
+                int targetX = startX + dx;
+                int targetY = startY + dy;
+
+                if (targetX >= 0 && targetX < cols && targetY >= 0 && targetY < rows) // Проверяем, что целевая клетка находится в пределах поля
+                {
+                    if (!(targetX == BlueChess.posX && targetY == BlueChess.posY) && !(targetX == RedChess.posX && targetY == RedChess.posY))
+                    {
+                        possibleMoves.Add((targetX, targetY));
+                    }
+                    else // Если на клетке есть фишка, проверяем возможность перепрыгивания
+                    {
+                        int endX = targetX + dx;
+                        int endY = targetY + dy;
+                        if (endX >= 0 && endX < cols && endY >= 0 && endY < rows && IsMoveValid(targetX, targetY, endX, endY))
+                        {
+                            possibleMoves.Add((endX, endY));
+                        }
+                    }
+                }
+            }
+            return possibleMoves;
+        }
+        private void HighlightAvailableMoves(List<(int x, int y)> moves)
+        {
+            foreach (var (x, y) in moves)
+            {
+                int index = y * cols + x;
+                if (index < canvas.Children.Count && canvas.Children[index] is Canvas cellCanvas)
+                {
+                    cellCanvas.Background = Brushes.Green;
+                }
+            }
+        }
+
+        private void ClearHighlights()
+        {
+            for (int i = 0; i < ind; i++)
+            {
+                if (canvas.Children[i] is Canvas cellCanvas)
+                {
+                    cellCanvas.Background = Brushes.Transparent;
+                }
+            }
+        }
     }
 }
