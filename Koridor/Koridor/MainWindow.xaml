@@ -37,6 +37,14 @@
         <Canvas Name="canvas"  Grid.Row="1"  Grid.Column="1" Grid.RowSpan="9" Grid.ColumnSpan="9" Background="Gray">
 
         </Canvas>
+        <TextBox Name="DebugTextBox" 
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 IsReadOnly="True" 
+                 TextWrapping="Wrap" 
+                 AcceptsReturn="True" 
+                 Background="Black" 
+                 Foreground="White" />
         <!--<Ellipse Fill="Black" Grid.Column="0" Grid.Row="0"/>-->
     </Grid>
 </Window>

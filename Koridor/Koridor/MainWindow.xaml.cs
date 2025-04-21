@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -13,22 +14,25 @@ namespace Koridor
         int ind = cols * rows;
         List<Line> vertLines = new List<Line>();
         List<Line> horizontLines = new List<Line>();
-        double canvasWidth ;
+        double canvasWidth;
         double canvasHeight;
         double cellWidth;
         double cellHeight;
 
-        Chess BlueChess = new Chess();
-        Chess RedChess = new Chess();
+        Chess BlueChess = new Chess(4, 0, false);
+        Chess RedChess = new Chess(4, 8, true);
         Ellipse BlueChessElp = new Ellipse();
         Ellipse RedChessElp = new Ellipse();
 
-        bool SelectedChess;
+        private bool currentPlayer = true; // true = красный, false = синий
+        bool SelectedChess = false;
+        Chess SelectedChessObject;
 
         public MainWindow()
         {
             InitializeComponent();
             DrawGrid();
+            canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
         }
 
         private void MainSizeChanged(object sender, SizeChangedEventArgs e)
@@ -98,6 +102,8 @@ namespace Koridor
                         cellCanvas.Children.Add(rightLine);
                     }
 
+
+
                     // нижняя линия (только для последней строки)
                     if (row == rows - 1)
                     {
@@ -113,23 +119,20 @@ namespace Koridor
                         cellCanvas.Children.Add(bottomLine);
                     }
 
-                    cellCanvas.MouseDown += (sender, e) =>
-                    {
-                        cellCanvas.Background = Brushes.Green;
-                    };
+                    //cellCanvas.MouseDown += (sender, e) =>
+                    //{
+                    //    cellCanvas.Background = Brushes.Green;
+                    //};
 
                     canvas.Children.Add(cellCanvas);
                 }
             }
-            BlueChess.red = false;
-            BlueChess.posX = 4;
-            BlueChess.posY = 0;
-
-            RedChess.red = true;
-            RedChess.posX = 4;
-            RedChess.posY = 8;
         }
-
+        private void Log(string message)
+        {
+            DebugTextBox.Text += message + "\n";
+            DebugTextBox.ScrollToEnd();
+        }
         private void UpdateGrid()
         {
             canvasWidth = canvas.ActualWidth;
@@ -199,6 +202,8 @@ namespace Koridor
             RedChessElp.Stroke = Brushes.DarkRed;
             RedChessElp.StrokeThickness = 2;
 
+
+
             // удаляем фишки из старых позиций
             foreach (var child in canvas.Children)
             {
@@ -232,6 +237,96 @@ namespace Koridor
                     Canvas.SetTop(RedChessElp, (cellHeight - RedChessElp.Height) / 2);
                     redCell.Children.Add(RedChessElp);
                 }
+            }
+        }
+        private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Point clickPoint = e.GetPosition(canvas);
+
+            int clickedX = (int)(clickPoint.X / cellWidth);
+            int clickedY = (int)(clickPoint.Y / cellHeight);
+
+            Log($"Clicked at ({clickedX}, {clickedY})");
+            if (!SelectedChess)
+            {
+                if (clickedX == BlueChess.posX && clickedY == BlueChess.posY && !currentPlayer)
+                {
+                    SelectedChess = true;
+                    SelectedChessObject = BlueChess;
+                }
+                else if (clickedX == RedChess.posX && clickedY == RedChess.posY && currentPlayer)
+                {
+                    SelectedChess = true;
+                    SelectedChessObject = RedChess;
+                }
+            }
+            else
+            {
+                if (clickedX == SelectedChessObject.posX && clickedY == SelectedChessObject.posY) return; // клик по своей же фишке
+                if (IsMoveValid(SelectedChessObject.posX, SelectedChessObject.posY, clickedX, clickedY))
+                {
+                    if ((clickedX == BlueChess.posX && clickedY == BlueChess.posY) || (clickedX == RedChess.posX && clickedY == RedChess.posY)) //занято ли поле
+                    {
+                        if (IsMoveValid(clickedX, clickedY, clickedX + (clickedX - SelectedChessObject.posX), clickedY + (clickedY - SelectedChessObject.posY)))
+                        {
+                            Log($"Moved to ({clickedX + (clickedX - SelectedChessObject.posX)},{clickedY + (clickedY - SelectedChessObject.posY)})");
+                            MoveChess(SelectedChessObject, clickedX + (clickedX - SelectedChessObject.posX), clickedY + (clickedY - SelectedChessObject.posY));
+                        };
+                    }
+                    else
+                    {
+                        MoveChess(SelectedChessObject, clickedX, clickedY);
+                        Log($"Moved to ({clickedX}, {clickedY})");
+                    }
+                    currentPlayer = !currentPlayer;
+                    Log($"Current player: {(currentPlayer ? "red" : "blue")}");
+                }
+
+
+
+                // Сброс выбора фишки
+                SelectedChess = false;
+                SelectedChessObject = null;
+            }
+        }
+        private bool IsMoveValid(int startX, int startY, int endX, int endY)
+        {
+            if (startX < 0 || startY < 0 || startX >= cols || startY >= rows) return false; //ход в поле p.1
+            if (endX < 0 || endY < 0 || endX >= cols || endY >= rows) return false; //ход на поле p.2
+            if (Math.Abs(startX - endX) + Math.Abs(startY - endY) != 1) return false; //ход на одну клетку
+            if ((endX == BlueChess.posX && endY == BlueChess.posY) || (endX == RedChess.posX && endY == RedChess.posY)) //занято ли поле
+            {
+                if (IsMoveValid(endX, endY, endX + (endX - startX), endY + (endY - startY))) return true; //можно ли перепрыгнуть
+                else return false;
+            }
+            //ещё нужна проверка на стенку
+            return true;
+        }
+        private void MoveChess(Chess chess, int endX, int endY)
+        {
+            // Удаляем фишку из текущего Canvas
+            foreach (var child in canvas.Children)
+            {
+                if (child is Canvas cellCanvas)
+                {
+                    if (cellCanvas.Children.Contains(BlueChessElp) || cellCanvas.Children.Contains(RedChessElp))
+                    {
+                        cellCanvas.Children.Remove(chess.red ? RedChessElp : BlueChessElp);
+                    }
+                }
+            }
+
+            // Обновляем позицию фишки
+            chess.posX = endX;
+            chess.posY = endY;
+
+            // Добавляем фишку в новый Canvas
+            int newIndex = endY * cols + endX;
+            if (newIndex < canvas.Children.Count && canvas.Children[newIndex] is Canvas newCell)
+            {
+                Canvas.SetLeft(chess.red ? RedChessElp : BlueChessElp, (cellWidth - (chess.red ? RedChessElp.Width : BlueChessElp.Width)) / 2);
+                Canvas.SetTop(chess.red ? RedChessElp : BlueChessElp, (cellHeight - (chess.red ? RedChessElp.Height : BlueChessElp.Height)) / 2);
+                newCell.Children.Add(chess.red ? RedChessElp : BlueChessElp);
             }
         }
 
