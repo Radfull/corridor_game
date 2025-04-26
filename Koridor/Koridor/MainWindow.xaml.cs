@@ -1,9 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using static Koridor.Chess;
+using Point = System.Windows.Point;
 
 namespace Koridor
 {
@@ -26,8 +33,13 @@ namespace Koridor
 
         private bool currentPlayer = true; // true = красный, false = синий
         bool SelectedChess = false;
-        Chess SelectedChessObject;
+        Chess? SelectedChessObject;
 
+        private int? selectedCellIndex = null; // Индекс текущей выделенной клетки
+
+        private Line? temporaryWall = null;
+        private bool isTemporaryWallPlaced = false; // Флаг для отслеживания временной стены
+        private bool TemporaryWallPlaced = false; //вторйо флаг для того же
         public MainWindow()
         {
             InitializeComponent();
@@ -71,8 +83,10 @@ namespace Koridor
                         Y1 = cellHeight * 0.25,
                         Y2 = cellHeight * 0.75,
                         Stroke = Brushes.Red,
-                        StrokeThickness = 2
+                        StrokeThickness = 2,
+                        Tag = "LeftLine"
                     };
+                    leftLine.MouseDown += Border_MouseDown;
                     cellCanvas.Children.Add(leftLine);
 
                     //горизонтальная линия (верхняя)
@@ -83,8 +97,10 @@ namespace Koridor
                         Y1 = 0,
                         Y2 = 0,
                         Stroke = Brushes.Red,
-                        StrokeThickness = 2
+                        StrokeThickness = 2,
+                        Tag = "TopLine" // Добавляем тег
                     };
+                    topLine.MouseDown += Border_MouseDown;
                     cellCanvas.Children.Add(topLine);
 
                     // правая линия (только для последнего столбца)
@@ -97,12 +113,12 @@ namespace Koridor
                             Y1 = cellHeight * 0.25,
                             Y2 = cellHeight * 0.75,
                             Stroke = Brushes.Red,
-                            StrokeThickness = 2
+                            StrokeThickness = 2,
+                            Tag = "RightLine" // Добавляем тег
                         };
+                        rightLine.MouseDown += Border_MouseDown;
                         cellCanvas.Children.Add(rightLine);
                     }
-
-
 
                     // нижняя линия (только для последней строки)
                     if (row == rows - 1)
@@ -114,8 +130,10 @@ namespace Koridor
                             Y1 = cellHeight,
                             Y2 = cellHeight,
                             Stroke = Brushes.Red,
-                            StrokeThickness = 2
+                            StrokeThickness = 2,
+                            Tag = "BottomLine" // Добавляем тег
                         };
+                        bottomLine.MouseDown += Border_MouseDown;
                         cellCanvas.Children.Add(bottomLine);
                     }
 
@@ -151,39 +169,51 @@ namespace Koridor
                     cellCanvas.Height = cellHeight;
                     cellCanvas.Margin = new Thickness(col * cellWidth, row * cellHeight, 0, 0);
 
-                    // обновление левой линии
-                    if (cellCanvas.Children[0] is Line leftLine)
+                    // Обновление левой линии
+                    foreach (var child in cellCanvas.Children)
                     {
-                        leftLine.Y1 = cellHeight * 0.25;
-                        leftLine.Y2 = cellHeight * 0.75;
-                    }
-
-                    // обновление верхней линии
-                    if (cellCanvas.Children[1] is Line topLine)
-                    {
-                        topLine.X1 = cellWidth * 0.25;
-                        topLine.X2 = cellWidth * 0.75;
-                    }
-
-                    // обновление правой линии
-                    if (col == cols - 1 && cellCanvas.Children.Count > 2 && cellCanvas.Children[2] is Line rightLine)
-                    {
-                        rightLine.X1 = cellWidth;
-                        rightLine.X2 = cellWidth;
-                        rightLine.Y1 = cellHeight * 0.25;
-                        rightLine.Y2 = cellHeight * 0.75;
-                    }
-
-                    // обновление нижней линии
-                    if (row == rows - 1)
-                    {
-                        int bottomLineIndex = (col == cols - 1) ? 3 : 2;
-                        if (cellCanvas.Children.Count > bottomLineIndex && cellCanvas.Children[bottomLineIndex] is Line bottomLine)
+                        if (child is Line line && line.Tag?.ToString() == "LeftLine")
                         {
-                            bottomLine.X1 = cellWidth * 0.25;
-                            bottomLine.X2 = cellWidth * 0.75;
-                            bottomLine.Y1 = cellHeight;
-                            bottomLine.Y2 = cellHeight;
+                            line.X1 = 1;
+                            line.X2 = 1;
+                            line.Y1 = cellHeight * 0.25;
+                            line.Y2 = cellHeight * 0.75;
+                    }
+                    }
+
+                    // Обновление верхней линии
+                    foreach (var child in cellCanvas.Children)
+                    {
+                        if (child is Line line && line.Tag?.ToString() == "TopLine")
+                        {
+                            line.X1 = cellWidth * 0.25;
+                            line.X2 = cellWidth * 0.75;
+                            line.Y1 = 1;
+                            line.Y2 = 1;
+                    }
+                    }
+
+                    // Обновление правой линии
+                    foreach (var child in cellCanvas.Children)
+                    {
+                        if (child is Line line && line.Tag?.ToString() == "RightLine")
+                        {
+                            line.X1 = cellWidth - 1;
+                            line.X2 = cellWidth - 1;
+                            line.Y1 = cellHeight * 0.25;
+                            line.Y2 = cellHeight * 0.75;
+                    }
+                    }
+
+                    // Обновление нижней линии
+                    foreach (var child in cellCanvas.Children)
+                    {
+                        if (child is Line line && line.Tag?.ToString() == "BottomLine")
+                        {
+                            line.X1 = cellWidth * 0.25;
+                            line.X2 = cellWidth * 0.75;
+                            line.Y1 = cellHeight - 1;
+                            line.Y2 = cellHeight - 1;
                         }
                     }
                 }
@@ -245,10 +275,31 @@ namespace Koridor
 
             int clickedX = (int)(clickPoint.X / cellWidth);
             int clickedY = (int)(clickPoint.Y / cellHeight);
+            int clickedIndex = clickedY * cols + clickedX;
 
+            // Если уже есть выделенная клетка, снимаем выделение
+            if (!TemporaryWallPlaced)
+            {
+                ResetBorderColors();
+            }
+            // Выделяем границы новой клетки
+            if (clickedIndex >= 0 && clickedIndex < canvas.Children.Count)
+            {
+                HighlightBorders(clickedIndex); // Выделяем границы
+                selectedCellIndex = clickedIndex; // Обновляем индекс текущей клетки
+            }
             Log($"Clicked at ({clickedX}, {clickedY})");
+            if (TemporaryWallPlaced && isWallEndValid())
+            {
+                RemoveTemporaryWall();
+            }
+            if (isTemporaryWallPlaced)
+            {
+                TemporaryWallPlaced = true;
+            }
             if (!SelectedChess)
             {
+                // выбор игрока
                 if (clickedX == BlueChess.posX && clickedY == BlueChess.posY && !currentPlayer)
                 {
                     SelectedChess = true;
@@ -264,6 +315,7 @@ namespace Koridor
             }
             else
             {
+                ResetBorderColors();
                 var possibleMoves = GetAvailableMoves(SelectedChessObject.posX, SelectedChessObject.posY);
                 if (possibleMoves.Contains((clickedX, clickedY)))
                 {
@@ -272,7 +324,6 @@ namespace Koridor
                     currentPlayer = !currentPlayer;
                     Log($"Current player: {(currentPlayer ? "red" : "blue")}");
                 }
-
                 ClearHighlights();
                 SelectedChess = false;
                 SelectedChessObject = null;
@@ -362,7 +413,6 @@ namespace Koridor
                 }
             }
         }
-
         private void ClearHighlights()
         {
             for (int i = 0; i < ind; i++)
@@ -372,6 +422,330 @@ namespace Koridor
                     cellCanvas.Background = Brushes.Transparent;
                 }
             }
+        }
+        private void HighlightBorders(int clickedIndex)
+        {
+            if (isTemporaryWallPlaced) return;
+            if (clickedIndex >= 0 && clickedIndex < canvas.Children.Count)
+            {
+                if (canvas.Children[clickedIndex] is Canvas currentCellCanvas)
+                {
+                    foreach (var child in currentCellCanvas.Children)
+                    {
+                        if (child is Line line)
+                        {
+                            if (line.Stroke != Brushes.Black)
+                            {
+                                switch (line.Tag?.ToString())
+                                {
+                                    case "LeftLine":
+                                        if (clickedIndex % cols != 0) line.Stroke = Brushes.LightGreen;
+                                        break;
+                                    case "TopLine":
+                                        if (clickedIndex >= cols) line.Stroke = Brushes.LightGreen;
+                                        break;
+                                    case "TopTemporaryWall":
+                                        line.Stroke = Brushes.LightGreen;
+                                        line.Tag = "TopLine";
+                                        break;
+                                    case "LeftTemporaryWall":
+                                        line.Stroke = Brushes.LightGreen;
+                                        line.Tag = "LeftLine";
+                                        break;
+
+                                }
+                            }
+                        }
+                    }
+                }
+                if (((clickedIndex + 1) % cols != 0) && canvas.Children[clickedIndex + 1] is Canvas rightCellCanvas)
+                {
+                    foreach (var child in rightCellCanvas.Children)
+                    {
+                        if (child is Line line)
+                        {
+                            if (line.Stroke != Brushes.Black)
+                            {
+                                switch (line.Tag?.ToString())
+                                {
+                                    case "LeftLine":
+                                        line.Stroke = Brushes.LightGreen; // Перекраска всех линий
+                                        break;
+                                    case "LeftTemporaryWall":
+                                        line.Stroke = Brushes.LightGreen;
+                                        line.Tag = "LeftLine";
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if ((clickedIndex + rows) < canvas.Children.Count && canvas.Children[clickedIndex + rows] is Canvas downCellCanvas)
+                {
+                    foreach (var child in downCellCanvas.Children)
+                    {
+                        if (child is Line line)
+                        {
+                            if (line.Stroke != Brushes.Black)
+                            {
+                                switch (line.Tag?.ToString())
+                                {
+                                    case "TopLine":
+                                        line.Stroke = Brushes.LightGreen; // Перекраска всех линий
+                                        break;
+                                    case "TopTemporaryWall":
+                                        line.Stroke = Brushes.LightGreen;
+                                        line.Tag = "TopLine";
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+    }
+}
+        private void HighlightBorder()
+        {
+            for (int cellIndex = 1; cellIndex < canvas.Children.Count ; cellIndex++)
+            {
+                if (canvas.Children[cellIndex] is Canvas cellCanvas)
+                {
+                    foreach (var child in cellCanvas.Children)
+                    {
+                        if (child is Line line)
+                        {
+                            if (line.Tag.ToString() == "LeftWall")
+                            {
+                                if (cellIndex > rows)
+                                {
+                                    if (canvas.Children[cellIndex - rows] is Canvas UpCellCanvas)
+                                    {
+                                        foreach (var child1 in UpCellCanvas.Children)
+                                        {
+                                            if (child1 is Line line1)
+                                            {
+                                                if (line1.Tag.ToString() == "LeftLine")
+                                                {
+                                                    line1.Tag = "LeftTemporaryWall";
+                                                    line1.Stroke = Brushes.LightGreen;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (cellIndex + rows < canvas.Children.Count)
+                                {
+                                    if (canvas.Children[cellIndex + rows] is Canvas DownCellCanvas)
+                                    {
+                                        foreach (var child1 in DownCellCanvas.Children)
+                                        {
+                                            if (child1 is Line line1)
+                                            {
+                                                if (line1.Tag.ToString() == "LeftLine")
+                                                {
+                                                    line1.Tag = "LeftTemporaryWall";
+                                                    line1.Stroke = Brushes.LightGreen;
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (line.Tag.ToString() == "TopWall")
+                            {
+                                if ((cellIndex - 1) % cols != cols - 1)
+                                {
+                                    if (canvas.Children[cellIndex - 1] is Canvas LeftCellCanvas)
+                                    {
+                                        foreach (var child1 in LeftCellCanvas.Children)
+                                        {
+                                            if (child1 is Line line1)
+                                            {
+                                                if (line1.Tag.ToString() == "TopLine")
+                                                {
+                                                    line1.Tag = "TopTemporaryWall";
+                                                    line1.Stroke = Brushes.LightGreen;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if ((cellIndex + 1) % cols != 0)
+                                {
+                                    if (canvas.Children[cellIndex + 1] is Canvas RightCellCanvas)
+                                    {
+                                        foreach (var child1 in RightCellCanvas.Children)
+                                        {
+                                            if (child1 is Line line1)
+                                            {
+                                                if (line1.Tag.ToString() == "TopLine")
+                                                {
+                                                    line1.Tag = "TopTemporaryWall";
+                                                    line1.Stroke = Brushes.LightGreen;
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void ResetBorderColors()
+        {
+            foreach (Canvas Cell in canvas.Children)
+            {
+                foreach (var child in Cell.Children)
+                {
+                    if (child is Line line)
+                    {
+                        if (line.Stroke == Brushes.LightGreen && (line.Tag?.ToString() != "LeftTemporaryWall" && line.Tag?.ToString() != "TopTemporaryWall"))
+                        {
+                            line.StrokeThickness = 2;
+                            line.Stroke = Brushes.Red; // Возвращаем исходный цвет границ
+                        }
+                    }
+                }
+            }
+        }
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Line border)
+            {
+                ResetBorderColors();
+                string? tag = border.Tag?.ToString();
+                Point clickPoint = e.GetPosition(canvas);
+                int clickedX = (int)(clickPoint.X / cellWidth);
+                int clickedY = (int)(clickPoint.Y / cellHeight);
+
+                // Игнорируем некорректные границы
+                if (tag == "RightLine" || tag == "BottomLine" || (tag == "LeftLine" && clickedX % cols == 0) || (tag == "TopLine" && clickedY == 0)) return;
+
+                // Определяем ориентацию стены
+                bool isVertical = (tag == "LeftLine");
+                ResetBorderColors();
+                // Если временная стена ещё не существует
+                if (temporaryWall == null)
+                {
+                    temporaryWall = border;
+                    ResetBorderColors();
+                    isTemporaryWallPlaced = true;
+                    border.Stroke = Brushes.Black;
+                    border.StrokeThickness = 5;
+                    border.Tag = $"{(isVertical ? "Left" : "Top")}Wall";
+                    if (isVertical)
+                    {
+                        //border.Y1 = 0;
+                        //border.Y2 = cellHeight;
+                        HighlightBorder();
+                    }
+                    else
+                    {
+                        //border.X1 = 0;
+                        //border.X2 = cellHeight;
+                        HighlightBorder();
+                    }
+                }
+                else
+                {
+                    if (border.Tag == "LeftTemporaryWall")
+                    {
+                        border.Tag = "LeftPlacedWall";
+                        border.Stroke = Brushes.Black;
+                        border.StrokeThickness = 5;
+                        //border.Y1 = 0;
+                        //border.Y2 = cellHeight;
+                        FromTemporaryToPlaced();
+                        RemoveTemporaryWall();
+                        isTemporaryWallPlaced = false;
+                        TemporaryWallPlaced = false;
+                        temporaryWall = null;
+                        Log($"Player {(currentPlayer ? "red" : "blue")} placed wall!");
+                        currentPlayer = !currentPlayer;
+                        Log($"Current player: {(currentPlayer ? "red" : "blue")}");
+
+                    }
+                    else if (border.Tag == "TopTemporaryWall")
+                    {
+                        border.Tag = "TopPlacedWall";
+                        border.Stroke = Brushes.Black;
+                        border.StrokeThickness = 5;
+                        //border.Y1 = 0;
+                        //border.Y2 = cellHeight;
+                        FromTemporaryToPlaced();
+                        RemoveTemporaryWall();
+                        isTemporaryWallPlaced = false;
+                        TemporaryWallPlaced = false;
+                        temporaryWall = null;
+                        Log($"Player {(currentPlayer ? "red" : "blue")} placed wall!");
+                        currentPlayer = !currentPlayer;
+                        Log($"Current player: {(currentPlayer ? "red" : "blue")}");
+                    }
+                    else
+                    {
+                        Log("sdads");
+                    }
+                }
+            }
+        }
+        private void RemoveTemporaryWall()
+        {
+            foreach (Canvas Cell in canvas.Children)
+            {
+                foreach (var child in Cell.Children)
+                {
+                    if (child is Line line)
+                    {
+                        if (line.Tag?.ToString() == "LeftTemporaryWall" || line.Tag?.ToString() == "LeftWall")
+                        {
+                            line.StrokeThickness = 2;
+                            line.Stroke = Brushes.Red;
+                            line.Tag = "LeftLine";
+                            line.X1 = 0;
+                            line.X2 = 0;
+                            line.Y1 = cellHeight * 0.25;
+                            line.Y2 = cellHeight * 0.75;
+                        }
+                        if (line.Tag?.ToString() == "TopTemporaryWall" || line.Tag?.ToString() == "TopWall")
+                        {
+                            line.StrokeThickness = 2;
+                            line.Stroke = Brushes.Red;
+                            line.Tag = "TopLine";
+                            line.X1 = cellWidth * 0.25;
+                            line.X2 = cellWidth * 0.75;
+                            line.Y1 = 0;
+                            line.Y2 = 0;
+                        }
+                    }
+                }
+            }
+            isTemporaryWallPlaced = false;
+            TemporaryWallPlaced = false;
+            temporaryWall = null;
+        }
+        private void FromTemporaryToPlaced()
+        {
+            foreach (Canvas Cell in canvas.Children)
+            {
+                foreach (var child in Cell.Children)
+                {
+                    if (child is Line line)
+                    {
+                        if (line.Tag?.ToString() == "LeftWall") line.Tag = "LeftPlacedWall";
+                        if (line.Tag?.ToString() == "TopWall") line.Tag = "TopPlacedWall";
+                    }
+                }
+            }
+        }
+        private bool isWallEndValid()
+        {
+            return true;
         }
     }
 }
