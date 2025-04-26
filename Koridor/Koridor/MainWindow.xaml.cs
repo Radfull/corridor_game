@@ -9,6 +9,7 @@ using System.Windows.Shapes;
 
 namespace Koridor
 {
+
     public partial class MainWindow : Window
     {
         static int cols = 9;
@@ -32,6 +33,7 @@ namespace Koridor
 
         AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>> field = new AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>>();
 
+
         public MainWindow()
         {
             InitializeComponent();
@@ -39,6 +41,12 @@ namespace Koridor
             FillField();
             canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
 
+        }
+        private void MenuButtonClick(object sender, RoutedEventArgs e)
+        {
+            var menuWindow = new MenuWindow();
+            menuWindow.Show();
+            this.Close();
         }
 
         private void FillField()
@@ -425,4 +433,5 @@ namespace Koridor
             }
         }
     }
+
 }

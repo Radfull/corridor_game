@@ -1,9 +1,7 @@
 ﻿<Application x:Class="Koridor.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Koridor"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MenuWindow.xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>

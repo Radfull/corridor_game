@@ -1,4 +1,3 @@
-C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\MainWindow.g.cs
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\App.g.cs
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor_MarkupCompile.cache
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor_MarkupCompile.lref
@@ -7,7 +6,6 @@ C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\bin\De
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\bin\Debug\net8.0-windows\Koridor.runtimeconfig.json
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\bin\Debug\net8.0-windows\Koridor.dll
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\bin\Debug\net8.0-windows\Koridor.pdb
-C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\MainWindow.baml
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.g.resources
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.AssemblyInfoInputs.cache
@@ -22,3 +20,9 @@ C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\De
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\bin\Debug\net8.0-windows\QuikGraph.dll
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.csproj.AssemblyReference.cache
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.csproj.Up2Date
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\MainWindow.baml
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\MenuWindow.g.cs
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\RulesWindow.g.cs
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\MenuWindow.baml
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\RulesWindow.baml
