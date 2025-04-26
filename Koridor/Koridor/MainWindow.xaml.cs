@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using QuikGraph;
+using QuikGraph.Algorithms.ShortestPath;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,13 +30,59 @@ namespace Koridor
         bool SelectedChess = false;
         Chess SelectedChessObject;
 
+        AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>> field = new AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>>();
+
         public MainWindow()
         {
             InitializeComponent();
             DrawGrid();
+            FillField();
             canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
+
         }
 
+        private void FillField()
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    field.AddVertex((i,j));
+
+                }
+            }
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (i > 0) field.AddEdge(new TaggedEdge<(int x, int y), int>((i, j), (i - 1, j), 1));
+                    if (i < rows - 1) field.AddEdge(new TaggedEdge<(int x, int y), int>((i, j), (i + 1, j), 1));
+                    if (j > 0) field.AddEdge(new TaggedEdge<(int x, int y), int>((i, j), (i, j - 1), 1));
+                    if (j < rows - 1) field.AddEdge(new TaggedEdge<(int x, int y), int>((i, j), (i, j + 1), 1));
+
+                }
+            }
+
+        }
+
+        public int GetShortesDist((int x, int y) start)
+        {
+            var dijkstra = new DijkstraShortestPathAlgorithm<(int x, int y), TaggedEdge<(int x, int y), int>>(
+                field,
+                edge => edge.Tag
+            );
+            dijkstra.Compute(start);
+
+            int MinDist = int.MaxValue;
+            for (int i = 0; i < cols; i++)
+            {
+                if (dijkstra.Distances.TryGetValue((i,8), out double distance) && distance < MinDist) MinDist = (int)distance;
+
+            }
+            
+            return MinDist;
+        }
         private void MainSizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateGrid();
@@ -246,11 +294,14 @@ namespace Koridor
             int clickedX = (int)(clickPoint.X / cellWidth);
             int clickedY = (int)(clickPoint.Y / cellHeight);
 
+
             Log($"Clicked at ({clickedX}, {clickedY})");
             if (!SelectedChess)
             {
                 if (clickedX == BlueChess.posX && clickedY == BlueChess.posY && !currentPlayer)
                 {
+                    int MinDist = GetShortesDist((BlueChess.posX, BlueChess.posY));
+                    Log($"Min Distance: {MinDist}");
                     SelectedChess = true;
                     SelectedChessObject = BlueChess;
                     HighlightAvailableMoves(GetAvailableMoves(clickedX, clickedY));

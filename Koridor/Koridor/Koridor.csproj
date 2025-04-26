@@ -8,4 +8,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="QuikGraph" Version="2.5.0" />
+  </ItemGroup>
+
 </Project>

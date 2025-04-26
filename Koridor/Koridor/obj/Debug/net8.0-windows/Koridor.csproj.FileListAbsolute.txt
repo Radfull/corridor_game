@@ -19,3 +19,6 @@ C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\De
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.genruntimeconfig.cache
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\ref\Koridor.dll
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.sourcelink.json
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\bin\Debug\net8.0-windows\QuikGraph.dll
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.csproj.AssemblyReference.cache
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor.csproj.Up2Date
