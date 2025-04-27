@@ -329,22 +329,49 @@ namespace Koridor
                 SelectedChessObject = null;
             }
         }
-        private bool IsMoveValid(int startX, int startY, int endX, int endY)
+        private bool CheckForPlacedWall(int startX, int startY, int endX, int endY)
         {
-            if (startX < 0 || startY < 0 || startX >= cols || startY >= rows) return false; //ход в поле p.1
-            if (endX < 0 || endY < 0 || endX >= cols || endY >= rows) return false; //ход на поле p.2
-            if (Math.Abs(startX - endX) + Math.Abs(startY - endY) != 1) return false; //ход на одну клетку
-            if ((endX == BlueChess.posX && endY == BlueChess.posY) || (endX == RedChess.posX && endY == RedChess.posY)) //занято ли поле
+            int currentIndex = startY * cols + startX;
+            int targetIndex = endY * cols + endX;
+            if (canvas.Children[currentIndex] is Canvas currentCellCanvas && canvas.Children[targetIndex] is Canvas targetCellCanvas)
             {
-                if (IsMoveValid(endX, endY, endX + (endX - startX), endY + (endY - startY))) return true; //можно ли перепрыгнуть
-                else return false;
+                // Проверяем наличие горизонтальной стены (движение вверх или вниз)
+                if (startY == endY + 1)
+                {
+                    foreach (var child in currentCellCanvas.Children)
+                    {
+                        if (child is Line line && line.Tag?.ToString() == "TopPlacedWall") return true;
+                        }
+                    }
+                if (startY == endY - 1)
+                {
+                    foreach (var child in targetCellCanvas.Children)
+                    {
+                        if (child is Line line && line.Tag?.ToString() == "TopPlacedWall") return true;
+                    }
+                }
+                // Проверяем наличие вертикальной стены (движение влево или вправо)
+                if (startX == endX + 1)
+                {
+                    foreach (var child in currentCellCanvas.Children)
+                    {
+                        if (child is Line line && line.Tag?.ToString() == "LeftPlacedWall") return true;
+                    }
+                }
+                if (startX == endX - 1)
+            {
+                    foreach (var child in targetCellCanvas.Children)
+                    {
+                        if (child is Line line && line.Tag?.ToString() == "LeftPlacedWall") return true;
             }
-            //ещё нужна проверка на стенку
-            return true;
+        }
+            }
+            return false;
         }
         private void MoveChess(Chess chess, int endX, int endY)
         {
             // Удаляем фишку из текущего Canvas
+            RemoveTemporaryWall();
             foreach (var child in canvas.Children)
             {
                 if (child is Canvas cellCanvas)
@@ -385,15 +412,20 @@ namespace Koridor
 
                 if (targetX >= 0 && targetX < cols && targetY >= 0 && targetY < rows) // Проверяем, что целевая клетка находится в пределах поля
                 {
-                    if (!(targetX == BlueChess.posX && targetY == BlueChess.posY) && !(targetX == RedChess.posX && targetY == RedChess.posY))
+                    bool hasWallOnTheWay = false;
+                    int currentIndex = startY * cols + startX;
+                    int targetIndex = targetY * cols + targetX;
+
+                    hasWallOnTheWay = CheckForPlacedWall(startX, startY, targetX, targetY);
+                    if (!hasWallOnTheWay && !(targetX == BlueChess.posX && targetY == BlueChess.posY) && !(targetX == RedChess.posX && targetY == RedChess.posY))
                     {
                         possibleMoves.Add((targetX, targetY));
                     }
-                    else // Если на клетке есть фишка, проверяем возможность перепрыгивания
+                    else if (!hasWallOnTheWay)// Если на клетке есть фишка, проверяем возможность перепрыгивания
                     {
                         int endX = targetX + dx;
                         int endY = targetY + dy;
-                        if (endX >= 0 && endX < cols && endY >= 0 && endY < rows && IsMoveValid(targetX, targetY, endX, endY))
+                        if (endX >= 0 && endX < cols && endY >= 0 && endY < rows && !CheckForPlacedWall(targetX, targetY, endX, endY))
                         {
                             possibleMoves.Add((endX, endY));
                         }
@@ -618,6 +650,7 @@ namespace Koridor
         {
             if (sender is Line border)
             {
+                ClearHighlights();
                 ResetBorderColors();
                 string? tag = border.Tag?.ToString();
                 Point clickPoint = e.GetPosition(canvas);
