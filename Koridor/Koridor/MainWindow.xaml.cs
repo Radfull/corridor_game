@@ -329,21 +329,19 @@ namespace Koridor
                 SelectedChessObject = null;
             }
         }
-        private bool CheckForPlacedWall(int startX, int startY, int endX, int endY)
+        private bool CheckForPlacedWall(int currentIndex, int targetIndex)
         {
-            int currentIndex = startY * cols + startX;
-            int targetIndex = endY * cols + endX;
             if (canvas.Children[currentIndex] is Canvas currentCellCanvas && canvas.Children[targetIndex] is Canvas targetCellCanvas)
             {
                 // Проверяем наличие горизонтальной стены (движение вверх или вниз)
-                if (startY == endY + 1)
+                if (currentIndex == targetIndex + cols)
                 {
                     foreach (var child in currentCellCanvas.Children)
                     {
                         if (child is Line line && line.Tag?.ToString() == "TopPlacedWall") return true;
                         }
                     }
-                if (startY == endY - 1)
+                if (currentIndex == targetIndex - cols)
                 {
                     foreach (var child in targetCellCanvas.Children)
                     {
@@ -351,14 +349,14 @@ namespace Koridor
                     }
                 }
                 // Проверяем наличие вертикальной стены (движение влево или вправо)
-                if (startX == endX + 1)
+                if (currentIndex == targetIndex + 1)
                 {
                     foreach (var child in currentCellCanvas.Children)
                     {
                         if (child is Line line && line.Tag?.ToString() == "LeftPlacedWall") return true;
                     }
                 }
-                if (startX == endX - 1)
+                if (currentIndex == targetIndex - 1)
             {
                     foreach (var child in targetCellCanvas.Children)
                     {
@@ -416,7 +414,7 @@ namespace Koridor
                     int currentIndex = startY * cols + startX;
                     int targetIndex = targetY * cols + targetX;
 
-                    hasWallOnTheWay = CheckForPlacedWall(startX, startY, targetX, targetY);
+                    hasWallOnTheWay = CheckForPlacedWall(currentIndex, targetIndex);
                     if (!hasWallOnTheWay && !(targetX == BlueChess.posX && targetY == BlueChess.posY) && !(targetX == RedChess.posX && targetY == RedChess.posY))
                     {
                         possibleMoves.Add((targetX, targetY));
@@ -425,7 +423,8 @@ namespace Koridor
                     {
                         int endX = targetX + dx;
                         int endY = targetY + dy;
-                        if (endX >= 0 && endX < cols && endY >= 0 && endY < rows && !CheckForPlacedWall(targetX, targetY, endX, endY))
+                        int endIndex = endY * cols + endX;
+                        if (endX >= 0 && endX < cols && endY >= 0 && endY < rows && !CheckForPlacedWall(targetIndex, endIndex))
                         {
                             possibleMoves.Add((endX, endY));
                         }
@@ -551,6 +550,9 @@ namespace Koridor
                                 {
                                     if (canvas.Children[cellIndex - rows] is Canvas UpCellCanvas)
                                     {
+                                        if (!CheckForPlacedWall(cellIndex, cellIndex - rows)
+                                            || !CheckForPlacedWall(cellIndex - 1, cellIndex - 1 - rows))
+                                        {
                                         foreach (var child1 in UpCellCanvas.Children)
                                         {
                                             if (child1 is Line line1)
@@ -565,10 +567,14 @@ namespace Koridor
                                         }
                                     }
                                 }
+                                }
                                 if (cellIndex + rows < canvas.Children.Count)
                                 {
                                     if (canvas.Children[cellIndex + rows] is Canvas DownCellCanvas)
                                     {
+                                        if (!CheckForPlacedWall(cellIndex, cellIndex + rows)
+                                            || !CheckForPlacedWall(cellIndex - 1, cellIndex - 1 + rows))
+                                        {
                                         foreach (var child1 in DownCellCanvas.Children)
                                         {
                                             if (child1 is Line line1)
@@ -584,12 +590,16 @@ namespace Koridor
                                     }
                                 }
                             }
+                            }
                             if (line.Tag.ToString() == "TopWall")
                             {
                                 if ((cellIndex - 1) % cols != cols - 1)
                                 {
                                     if (canvas.Children[cellIndex - 1] is Canvas LeftCellCanvas)
                                     {
+                                        if (!CheckForPlacedWall(cellIndex, cellIndex - 1)
+                                            || !CheckForPlacedWall(cellIndex - rows, cellIndex - rows - 1))
+                                        {
                                         foreach (var child1 in LeftCellCanvas.Children)
                                         {
                                             if (child1 is Line line1)
@@ -604,10 +614,14 @@ namespace Koridor
                                         }
                                     }
                                 }
+                                }
                                 if ((cellIndex + 1) % cols != 0)
                                 {
                                     if (canvas.Children[cellIndex + 1] is Canvas RightCellCanvas)
                                     {
+                                        if (!CheckForPlacedWall(cellIndex, cellIndex + 1)
+                                            || !CheckForPlacedWall(cellIndex - rows, cellIndex - rows + 1))
+                                        {
                                         foreach (var child1 in RightCellCanvas.Children)
                                         {
                                             if (child1 is Line line1)
@@ -627,6 +641,7 @@ namespace Koridor
                     }
                 }
             }
+        }
         }
         private void ResetBorderColors()
         {
@@ -720,10 +735,6 @@ namespace Koridor
                         Log($"Player {(currentPlayer ? "red" : "blue")} placed wall!");
                         currentPlayer = !currentPlayer;
                         Log($"Current player: {(currentPlayer ? "red" : "blue")}");
-                    }
-                    else
-                    {
-                        Log("sdads");
                     }
                 }
             }
