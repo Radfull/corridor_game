@@ -484,7 +484,6 @@ namespace Koridor
                                         line.Stroke = Brushes.LightGreen;
                                         line.Tag = "LeftLine";
                                         break;
-
                                 }
                             }
                         }
@@ -696,6 +695,7 @@ namespace Koridor
                         //border.Y2 = cellHeight;
                         FromTemporaryToPlaced();
                         RemoveTemporaryWall();
+                        ClearHighlights();
                         isTemporaryWallPlaced = false;
                         TemporaryWallPlaced = false;
                         temporaryWall = null;
@@ -713,6 +713,7 @@ namespace Koridor
                         //border.Y2 = cellHeight;
                         FromTemporaryToPlaced();
                         RemoveTemporaryWall();
+                        ClearHighlights();
                         isTemporaryWallPlaced = false;
                         TemporaryWallPlaced = false;
                         temporaryWall = null;
