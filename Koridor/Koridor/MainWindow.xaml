@@ -34,24 +34,27 @@
             <RowDefinition></RowDefinition>
             <RowDefinition Height="3*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Canvas Name="canvas"  Grid.Row="1"  Grid.Column="1" Grid.RowSpan="9" Grid.ColumnSpan="9" Background="Gray">
+        <Canvas Name="canvas" Grid.Row="1" Grid.Column="1" Grid.RowSpan="9" Grid.ColumnSpan="9" Background="Gray"/>
 
-        </Canvas>
         <TextBox Name="DebugTextBox" 
-                 Grid.Row="0"
-                 Grid.Column="0"
-                 IsReadOnly="True" 
-                 TextWrapping="Wrap" 
-                 AcceptsReturn="True" 
-                 Background="Black" 
-                 Foreground="White" />
-        <!--<Ellipse Fill="Black" Grid.Column="0" Grid.Row="0"/>-->
+                 Grid.Row="0" Grid.Column="0"
+                 IsReadOnly="True" TextWrapping="Wrap" 
+                 AcceptsReturn="True" Background="Black" Foreground="White"/>
+
+        <Button Name="WallModeButton" Content="Режим стенок" 
+                Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="3"
+                FontSize="16" Click="ToggleWallPlacementMode"/>
+
+        <Button Name="HorizontalWallButton" Content="Горизонтальная" 
+                Grid.Row="10" Grid.Column="4" Grid.ColumnSpan="2"
+                FontSize="16" Click="SetHorizontalWall"/>
+
+        <Button Name="VerticalWallButton" Content="Вертикальная" 
+                Grid.Row="10" Grid.Column="6" Grid.ColumnSpan="2"
+                FontSize="16" Click="SetVerticalWall"/>
+
         <Button Content="Меню" 
-                FontSize="24"
-                HorizontalAlignment="Right" 
-                VerticalAlignment="Top"
-                Margin="0,10,33,0"
-                Width="110"
-                Click="MenuButtonClick" Grid.Column="9" Grid.ColumnSpan="2" Height="46"/>
+                Grid.Row="10" Grid.Column="9" Grid.ColumnSpan="2"
+                FontSize="16" Click="MenuButtonClick"/>
     </Grid>
 </Window>

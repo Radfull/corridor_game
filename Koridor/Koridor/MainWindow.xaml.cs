@@ -33,21 +33,168 @@ namespace Koridor
 
         AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>> field = new AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>>();
 
-
+        private bool isPlacingWall = false;
+        private bool isHorizontalWall = true;
+        private List<(int x, int y, bool horizontal)> walls = new List<(int x, int y, bool horizontal)>();
         public MainWindow()
         {
             InitializeComponent();
             DrawGrid();
             FillField();
             canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
+            UpdateWallButtons();
 
         }
+
+        private void UpdateWallButtons()
+        {
+            HorizontalWallButton.Background = isHorizontalWall ? Brushes.LightGreen : Brushes.White;
+            VerticalWallButton.Background = !isHorizontalWall ? Brushes.LightGreen : Brushes.White;
+        }
+
+        private void ToggleWallPlacementMode(object sender, RoutedEventArgs e)
+        {
+            isPlacingWall = !isPlacingWall;
+            WallModeButton.Background = isPlacingWall ? Brushes.LightGreen : Brushes.White;
+            UpdateWallButtons();
+        }
+
+        private void SetHorizontalWall(object sender, RoutedEventArgs e)
+        {
+            isHorizontalWall = true;
+            UpdateWallButtons();
+        }
+
+        private void SetVerticalWall(object sender, RoutedEventArgs e)
+        {
+            isHorizontalWall = false;
+            UpdateWallButtons();
+        }
+
+        private void AddWall(int x, int y, bool horizontal)
+        {
+            if (CanPlaceWall(x, y))
+            {
+                Rectangle wall = new Rectangle
+                {
+                    Fill = Brushes.Black,
+                    Stroke = Brushes.DarkGray,
+                    StrokeThickness = 1,
+                    Opacity = 0.7 // Полупрозрачность для лучшей визуализации
+                };
+
+                if (horizontal)
+                {
+                    wall.Width = cellWidth * 2;
+                    wall.Height = 4;
+                    Canvas.SetLeft(wall, x * cellWidth);
+                    Canvas.SetTop(wall, (y + 1) * cellHeight - 2);
+                }
+                else
+                {
+                    wall.Width = 4;
+                    wall.Height = cellHeight * 2;
+                    Canvas.SetLeft(wall, (x + 1) * cellWidth - 2);
+                    Canvas.SetTop(wall, y * cellHeight);
+                }
+
+                canvas.Children.Add(wall);
+                walls.Add((x, y, horizontal));
+                UpdateGraphWithWall(x, y, horizontal);
+            }
+        }
+
+        private bool CanPlaceWall(int x, int y)
+        {
+            // Проверяем границы поля
+            if (x >= cols - 1 || y >= rows - 1) return false;
+
+            // Проверяем пересечение с другими стенками
+            foreach (var wall in walls)
+            {
+                if (isHorizontalWall)
+                {
+                    // Для горизонтальной стенки проверяем пересечение:
+                    // 1. С другими горизонтальными стенками в этом ряду
+                    if (wall.horizontal && wall.y == y &&
+                        (wall.x == x || wall.x == x - 1 || wall.x == x + 1))
+                        return false;
+
+                    // 2. С вертикальными стенками в точках пересечения
+                    if (!wall.horizontal &&
+                         (wall.x == x && (wall.y == y || wall.y == y - 1)))
+                        return false;
+                }
+                else
+                {
+                    // Для вертикальной стенки проверяем пересечение:
+                    // 1. С другими вертикальными стенками в этом столбце
+                    if (!wall.horizontal && wall.x == x &&
+                        (wall.y == y || wall.y == y - 1 || wall.y == y + 1))
+                        return false;
+
+                    // 2. С горизонтальными стенками в точках пересечения
+                    if (wall.horizontal &&
+                         (wall.y == y && (wall.x == x || wall.x == x - 1)))
+                        return false;
+                }
+            }
+
+            // Временно добавляем стенку для проверки доступности путей
+            walls.Add((x, y, isHorizontalWall));
+            UpdateGraphWithWall(x, y, isHorizontalWall);
+
+            // Проверяем доступность путей для обеих фишек
+            bool blueCanReach = GetShortesDist((BlueChess.posX, BlueChess.posY)) < 1000;
+            bool redCanReach = GetShortesDist((RedChess.posX, RedChess.posY)) < 1000;
+
+            // Удаляем временную стенку
+            walls.RemoveAt(walls.Count - 1);
+            UpdateGraphWithWall(x, y, isHorizontalWall); // Восстанавливаем граф
+
+            return blueCanReach && redCanReach;
+        }
+        
+
+        private void UpdateGraphWithWall(int x, int y, bool horizontal)
+        {
+            if (horizontal)
+            {
+                // Удаляем вертикальные связи между клетками
+                RemoveEdgeBetween((x, y), (x, y + 1));
+                RemoveEdgeBetween((x + 1, y), (x + 1, y + 1));
+            }
+            else
+            {
+                // Удаляем горизонтальные связи между клетками
+                RemoveEdgeBetween((x, y), (x + 1, y));
+                RemoveEdgeBetween((x, y + 1), (x + 1, y + 1));
+            }
+        }
+
+        private void RemoveEdgeBetween((int x, int y) source, (int x, int y) target)
+        {
+            // Находим ребро между вершинами
+            if (field.TryGetEdge(source, target, out var edge))
+            {
+                field.RemoveEdge(edge);
+            }
+
+            // Удаляем обратное ребро (для неориентированного графа)
+            if (field.TryGetEdge(target, source, out var reverseEdge))
+            {
+                field.RemoveEdge(reverseEdge);
+            }
+        }
+
         private void MenuButtonClick(object sender, RoutedEventArgs e)
         {
             var menuWindow = new MenuWindow();
             menuWindow.Show();
             this.Close();
         }
+
+
 
         private void FillField()
         {
@@ -302,62 +449,135 @@ namespace Koridor
             int clickedX = (int)(clickPoint.X / cellWidth);
             int clickedY = (int)(clickPoint.Y / cellHeight);
 
-
-            Log($"Clicked at ({clickedX}, {clickedY})");
-            if (!SelectedChess)
+            if (isPlacingWall)
             {
-                if (clickedX == BlueChess.posX && clickedY == BlueChess.posY && !currentPlayer)
+                if (clickedX < cols - 1 && clickedY < rows - 1)
                 {
-                    int MinDist = GetShortesDist((BlueChess.posX, BlueChess.posY));
-                    Log($"Min Distance: {MinDist}");
-                    SelectedChess = true;
-                    SelectedChessObject = BlueChess;
-                    HighlightAvailableMoves(GetAvailableMoves(clickedX, clickedY));
-                }
-                else if (clickedX == RedChess.posX && clickedY == RedChess.posY && currentPlayer)
-                {
-                    SelectedChess = true;
-                    SelectedChessObject = RedChess;
-                    HighlightAvailableMoves(GetAvailableMoves(clickedX, clickedY));
+                    AddWall(clickedX, clickedY, isHorizontalWall);
+                    currentPlayer = !currentPlayer; // Передаем ход
+                    Log($"Wall placed at ({clickedX}, {clickedY},{isHorizontalWall}),{(currentPlayer ? "red" : "blue")}");
                 }
             }
             else
             {
-                var possibleMoves = GetAvailableMoves(SelectedChessObject.posX, SelectedChessObject.posY);
-                if (possibleMoves.Contains((clickedX, clickedY)))
-                {
-                        MoveChess(SelectedChessObject, clickedX, clickedY);
-                        Log($"Moved to ({clickedX}, {clickedY})");
-                    currentPlayer = !currentPlayer;
-                    Log($"Current player: {(currentPlayer ? "red" : "blue")}");
-                }
 
-                ClearHighlights();
-                SelectedChess = false;
-                SelectedChessObject = null;
+                Log($"Clicked at ({clickedX}, {clickedY})");
+                if (!SelectedChess)
+                {
+                    if (clickedX == BlueChess.posX && clickedY == BlueChess.posY && !currentPlayer)
+                    {
+                        int MinDist = GetShortesDist((BlueChess.posX, BlueChess.posY));
+                        Log($"Min Distance: {MinDist}");
+                        SelectedChess = true;
+                        SelectedChessObject = BlueChess;
+                        HighlightAvailableMoves(GetAvailableMoves(clickedX, clickedY));
+                    }
+                    else if (clickedX == RedChess.posX && clickedY == RedChess.posY && currentPlayer)
+                    {
+                        SelectedChess = true;
+                        SelectedChessObject = RedChess;
+                        HighlightAvailableMoves(GetAvailableMoves(clickedX, clickedY));
+                    }
+                }
+                else
+                {
+                    var possibleMoves = GetAvailableMoves(SelectedChessObject.posX, SelectedChessObject.posY);
+                    if (possibleMoves.Contains((clickedX, clickedY)))
+                    {
+                            MoveChess(SelectedChessObject, clickedX, clickedY);
+                            Log($"Moved to ({clickedX}, {clickedY})");
+                        currentPlayer = !currentPlayer;
+                        Log($"Current player: {(currentPlayer ? "red" : "blue")}");
+                    }
+
+                    ClearHighlights();
+                    SelectedChess = false;
+                    SelectedChessObject = null;
+                }
             }
         }
         private bool IsMoveValid(int startX, int startY, int endX, int endY)
         {
-            if (startX < 0 || startY < 0 || startX >= cols || startY >= rows) return false; //ход в поле p.1
-            if (endX < 0 || endY < 0 || endX >= cols || endY >= rows) return false; //ход на поле p.2
-            if (Math.Abs(startX - endX) + Math.Abs(startY - endY) != 1) return false; //ход на одну клетку
-            if ((endX == BlueChess.posX && endY == BlueChess.posY) || (endX == RedChess.posX && endY == RedChess.posY)) //занято ли поле
+            // Проверка выхода за границы поля
+            if (endX < 0 || endY < 0 || endX >= cols || endY >= rows)
+                return false;
+
+            // Проверка расстояния (должен быть ход на 1 клетку)
+            if (Math.Abs(startX - endX) + Math.Abs(startY - endY) != 1)
+                return false;
+
+            // Проверка на наличие стенки между клетками
+            if (HasWallBetween(startX, startY, endX, endY))
+                return false;
+
+            // Проверка на занятость клетки другой фишкой
+            if ((endX == BlueChess.posX && endY == BlueChess.posY) ||
+                (endX == RedChess.posX && endY == RedChess.posY))
             {
-                if (IsMoveValid(endX, endY, endX + (endX - startX), endY + (endY - startY))) return true; //можно ли перепрыгнуть
-                else return false;
+                // Проверка возможности перепрыгивания
+                int jumpX = endX + (endX - startX);
+                int jumpY = endY + (endY - startY);
+
+                // Проверка границ поля после прыжка
+                if (jumpX < 0 || jumpY < 0 || jumpX >= cols || jumpY >= rows)
+                    return false;
+
+                // Полностью запрещаем прыжки, если между клетками есть стенка
+                if (HasWallBetween(endX, endY, jumpX, jumpY))
+                    return false;
+
+                // Проверка занятости клетки после прыжка
+                if ((jumpX == BlueChess.posX && jumpY == BlueChess.posY) ||
+                    (jumpX == RedChess.posX && jumpY == RedChess.posY))
+                    return false;
+
+                return true;
             }
-            //ещё нужна проверка на стенку
+
             return true;
         }
+
+        private bool HasWallBetween(int x1, int y1, int x2, int y2)
+        {
+            // Горизонтальное перемещение
+            if (y1 == y2)
+            {
+                int leftX = Math.Min(x1, x2);
+                return walls.Any(w =>
+                    (w.x == leftX && w.y == y1 && !w.horizontal) ||
+                    (w.x == leftX && w.y == y1 - 1 && !w.horizontal) ); // Вертикальная стенка
+            }
+            // Вертикальное перемещение
+            else if (x1 == x2)
+            {
+                int topY = Math.Min(y1, y2);
+                return walls.Any(w =>
+                    (w.x == x1 && w.y == topY && w.horizontal) ||
+                    (w.x == x1 - 1 && w.y == topY && w.horizontal)); // Горизонтальная стенка
+            }
+
+            return false;
+        }
+
         private void MoveChess(Chess chess, int endX, int endY)
         {
-            // Удаляем фишку из текущего Canvas
+            // Проверка на прыжок через фишку
+            if ((endX == BlueChess.posX && endY == BlueChess.posY) ||
+                (endX == RedChess.posX && endY == RedChess.posY))
+            {
+                // Вычисляем клетку после прыжка
+                int jumpX = endX + (endX - chess.posX);
+                int jumpY = endY + (endY - chess.posY);
+                endX = jumpX;
+                endY = jumpY;
+            }
+
+            // Удаляем фишку из текущей позиции
             foreach (var child in canvas.Children)
             {
                 if (child is Canvas cellCanvas)
                 {
-                    if (cellCanvas.Children.Contains(BlueChessElp) || cellCanvas.Children.Contains(RedChessElp))
+                    if (cellCanvas.Children.Contains(chess.red ? RedChessElp : BlueChessElp))
                     {
                         cellCanvas.Children.Remove(chess.red ? RedChessElp : BlueChessElp);
                     }
@@ -368,48 +588,53 @@ namespace Koridor
             chess.posX = endX;
             chess.posY = endY;
 
-            // Добавляем фишку в новый Canvas
+            // Добавляем фишку в новую позицию
             int newIndex = endY * cols + endX;
             if (newIndex < canvas.Children.Count && canvas.Children[newIndex] is Canvas newCell)
             {
-                Canvas.SetLeft(chess.red ? RedChessElp : BlueChessElp, (cellWidth - (chess.red ? RedChessElp.Width : BlueChessElp.Width)) / 2);
-                Canvas.SetTop(chess.red ? RedChessElp : BlueChessElp, (cellHeight - (chess.red ? RedChessElp.Height : BlueChessElp.Height)) / 2);
+                Canvas.SetLeft(chess.red ? RedChessElp : BlueChessElp,
+                              (cellWidth - (chess.red ? RedChessElp.Width : BlueChessElp.Width)) / 2);
+                Canvas.SetTop(chess.red ? RedChessElp : BlueChessElp,
+                             (cellHeight - (chess.red ? RedChessElp.Height : BlueChessElp.Height)) / 2);
                 newCell.Children.Add(chess.red ? RedChessElp : BlueChessElp);
             }
         }
         private List<(int x, int y)> GetAvailableMoves(int startX, int startY)
         {
             var possibleMoves = new List<(int x, int y)>();
+            var directions = new List<(int dx, int dy)> { (0, -1), (0, 1), (-1, 0), (1, 0) };
 
-            var directions = new List<(int dx, int dy)> // Возможные направления
-            {
-                (0, -1), (0, 1), (-1, 0), (1, 0)
-            };
-            
             foreach (var (dx, dy) in directions)
             {
                 int targetX = startX + dx;
                 int targetY = startY + dy;
 
-                if (targetX >= 0 && targetX < cols && targetY >= 0 && targetY < rows) // Проверяем, что целевая клетка находится в пределах поля
+                if (IsMoveValid(startX, startY, targetX, targetY))
                 {
-                    if (!(targetX == BlueChess.posX && targetY == BlueChess.posY) && !(targetX == RedChess.posX && targetY == RedChess.posY))
+                    // Если клетка занята фишкой - проверяем возможность прыжка
+                    if ((targetX == BlueChess.posX && targetY == BlueChess.posY) ||
+                        (targetX == RedChess.posX && targetY == RedChess.posY))
+                    {
+                        int jumpX = targetX + dx;
+                        int jumpY = targetY + dy;
+
+                        // Добавляем клетку после прыжка, если прыжок возможен
+                        if (IsMoveValid(targetX, targetY, jumpX, jumpY))
+                        {
+                            possibleMoves.Add((jumpX, jumpY));
+                        }
+                    }
+                    else
                     {
                         possibleMoves.Add((targetX, targetY));
                     }
-                    else // Если на клетке есть фишка, проверяем возможность перепрыгивания
-                    {
-                        int endX = targetX + dx;
-                        int endY = targetY + dy;
-                        if (endX >= 0 && endX < cols && endY >= 0 && endY < rows && IsMoveValid(targetX, targetY, endX, endY))
-                        {
-                            possibleMoves.Add((endX, endY));
-                        }
-                    }
                 }
             }
+
             return possibleMoves;
         }
+
+
         private void HighlightAvailableMoves(List<(int x, int y)> moves)
         {
             foreach (var (x, y) in moves)
