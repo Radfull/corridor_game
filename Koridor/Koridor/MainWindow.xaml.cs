@@ -36,6 +36,7 @@ namespace Koridor
         private bool isPlacingWall = false;
         private bool isHorizontalWall = true;
         private List<(int x, int y, bool horizontal)> walls = new List<(int x, int y, bool horizontal)>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -54,7 +55,7 @@ namespace Koridor
 
         private void ToggleWallPlacementMode(object sender, RoutedEventArgs e)
         {
-            isPlacingWall = !isPlacingWall;
+            if(!SelectedChess) isPlacingWall = !isPlacingWall;
             WallModeButton.Background = isPlacingWall ? Brushes.LightGreen : Brushes.White;
             UpdateWallButtons();
         }
@@ -73,35 +74,36 @@ namespace Koridor
 
         private void AddWall(int x, int y, bool horizontal)
         {
-            if (CanPlaceWall(x, y))
+            Rectangle wall = new Rectangle
             {
-                Rectangle wall = new Rectangle
-                {
-                    Fill = Brushes.Black,
-                    Stroke = Brushes.DarkGray,
-                    StrokeThickness = 1,
-                    Opacity = 0.7 // Полупрозрачность для лучшей визуализации
-                };
+                Fill = Brushes.Black,
+                Stroke = Brushes.DarkGray,
 
-                if (horizontal)
-                {
-                    wall.Width = cellWidth * 2;
-                    wall.Height = 4;
-                    Canvas.SetLeft(wall, x * cellWidth);
-                    Canvas.SetTop(wall, (y + 1) * cellHeight - 2);
-                }
-                else
-                {
-                    wall.Width = 4;
-                    wall.Height = cellHeight * 2;
-                    Canvas.SetLeft(wall, (x + 1) * cellWidth - 2);
-                    Canvas.SetTop(wall, y * cellHeight);
-                }
-
-                canvas.Children.Add(wall);
-                walls.Add((x, y, horizontal));
-                UpdateGraphWithWall(x, y, horizontal);
+            };
+            if (currentPlayer)
+            {
+                RedWallsBox.Text = (int.Parse(RedWallsBox.Text) - 1).ToString();
             }
+            else BlueWallsBox.Text = (int.Parse(BlueWallsBox.Text) - 1).ToString();
+
+            if (horizontal)
+            {
+                wall.Width = cellWidth * 2;
+                wall.Height = 8;
+                Canvas.SetLeft(wall, x * cellWidth);
+                Canvas.SetTop(wall, (y + 1) * cellHeight - 2);
+            }
+            else
+            {
+                wall.Width = 8;
+                wall.Height = cellHeight * 2;
+                Canvas.SetLeft(wall, (x + 1) * cellWidth - 2);
+                Canvas.SetTop(wall, y * cellHeight);
+            }
+
+            canvas.Children.Add(wall);
+            walls.Add((x, y, horizontal));
+            UpdateGraphWithWall(x, y, horizontal, true);
         }
 
         private bool CanPlaceWall(int x, int y)
@@ -142,33 +144,50 @@ namespace Koridor
 
             // Временно добавляем стенку для проверки доступности путей
             walls.Add((x, y, isHorizontalWall));
-            UpdateGraphWithWall(x, y, isHorizontalWall);
+            UpdateGraphWithWall(x, y, isHorizontalWall, true);
 
             // Проверяем доступность путей для обеих фишек
-            bool blueCanReach = GetShortesDist((BlueChess.posX, BlueChess.posY)) < 1000;
-            bool redCanReach = GetShortesDist((RedChess.posX, RedChess.posY)) < 1000;
+            bool blueCanReach = GetShortesDist((BlueChess.posX, BlueChess.posY), false) < 1000;
+            bool redCanReach = GetShortesDist((RedChess.posX, RedChess.posY), true) < 1000;
 
             // Удаляем временную стенку
             walls.RemoveAt(walls.Count - 1);
-            UpdateGraphWithWall(x, y, isHorizontalWall); // Восстанавливаем граф
+            UpdateGraphWithWall(x, y, isHorizontalWall, false); // Восстанавливаем граф
 
             return blueCanReach && redCanReach;
         }
         
 
-        private void UpdateGraphWithWall(int x, int y, bool horizontal)
+        private void UpdateGraphWithWall(int x, int y, bool horizontal, bool remove)
         {
             if (horizontal)
             {
-                // Удаляем вертикальные связи между клетками
-                RemoveEdgeBetween((x, y), (x, y + 1));
-                RemoveEdgeBetween((x + 1, y), (x + 1, y + 1));
+                if (remove)
+                {
+                    // Удаляем вертикальные связи между клетками
+                    RemoveEdgeBetween((x, y), (x, y + 1));
+                    RemoveEdgeBetween((x + 1, y), (x + 1, y + 1));
+                }
+                else
+                {
+                    field.AddEdge(new TaggedEdge<(int x, int y), int>((x, y), (x, y + 1), 1));
+                    field.AddEdge(new TaggedEdge<(int x, int y), int>((x + 1, y), (x + 1, y + 1), 1));
+                }
             }
             else
             {
-                // Удаляем горизонтальные связи между клетками
-                RemoveEdgeBetween((x, y), (x + 1, y));
-                RemoveEdgeBetween((x, y + 1), (x + 1, y + 1));
+                if (remove)
+                {
+                    // Удаляем горизонтальные связи между клетками
+                    RemoveEdgeBetween((x, y), (x + 1, y));
+                    RemoveEdgeBetween((x, y + 1), (x + 1, y + 1));
+
+                }
+                else
+                {
+                    field.AddEdge(new TaggedEdge<(int x, int y), int>((x, y), (x + 1, y), 1));
+                    field.AddEdge(new TaggedEdge<(int x, int y), int>((x, y + 1), (x + 1, y + 1), 1));
+                }
             }
         }
 
@@ -221,7 +240,7 @@ namespace Koridor
 
         }
 
-        public int GetShortesDist((int x, int y) start)
+        public int GetShortesDist((int x, int y) start, bool red)
         {
             var dijkstra = new DijkstraShortestPathAlgorithm<(int x, int y), TaggedEdge<(int x, int y), int>>(
                 field,
@@ -230,9 +249,10 @@ namespace Koridor
             dijkstra.Compute(start);
 
             int MinDist = int.MaxValue;
+
             for (int i = 0; i < cols; i++)
             {
-                if (dijkstra.Distances.TryGetValue((i,8), out double distance) && distance < MinDist) MinDist = (int)distance;
+                if (dijkstra.Distances.TryGetValue((i,(red) ? 0 : 8), out double distance) && distance < MinDist) MinDist = (int)distance;
 
             }
             
@@ -273,7 +293,7 @@ namespace Koridor
                         X2 = 0,
                         Y1 = cellHeight * 0.25,
                         Y2 = cellHeight * 0.75,
-                        Stroke = Brushes.Red,
+                        Stroke = Brushes.DarkGray,
                         StrokeThickness = 2
                     };
                     cellCanvas.Children.Add(leftLine);
@@ -285,7 +305,7 @@ namespace Koridor
                         X2 = cellWidth * 0.75,
                         Y1 = 0,
                         Y2 = 0,
-                        Stroke = Brushes.Red,
+                        Stroke = Brushes.DarkGray,
                         StrokeThickness = 2
                     };
                     cellCanvas.Children.Add(topLine);
@@ -299,7 +319,7 @@ namespace Koridor
                             X2 = cellWidth,
                             Y1 = cellHeight * 0.25,
                             Y2 = cellHeight * 0.75,
-                            Stroke = Brushes.Red,
+                            Stroke = Brushes.DarkGray,
                             StrokeThickness = 2
                         };
                         cellCanvas.Children.Add(rightLine);
@@ -316,7 +336,7 @@ namespace Koridor
                             X2 = cellWidth * 0.75,
                             Y1 = cellHeight,
                             Y2 = cellHeight,
-                            Stroke = Brushes.Red,
+                            Stroke = Brushes.DarkGray,
                             StrokeThickness = 2
                         };
                         cellCanvas.Children.Add(bottomLine);
@@ -451,8 +471,10 @@ namespace Koridor
 
             if (isPlacingWall)
             {
-                if (clickedX < cols - 1 && clickedY < rows - 1)
+                if (clickedX < cols - 1 && clickedY < rows - 1 && CanPlaceWall(clickedX, clickedY) && ((currentPlayer && int.Parse(RedWallsBox.Text) > 0) ||
+                    (!currentPlayer && int.Parse(BlueWallsBox.Text) > 0)))
                 {
+
                     AddWall(clickedX, clickedY, isHorizontalWall);
                     currentPlayer = !currentPlayer; // Передаем ход
                     Log($"Wall placed at ({clickedX}, {clickedY},{isHorizontalWall}),{(currentPlayer ? "red" : "blue")}");
@@ -466,7 +488,7 @@ namespace Koridor
                 {
                     if (clickedX == BlueChess.posX && clickedY == BlueChess.posY && !currentPlayer)
                     {
-                        int MinDist = GetShortesDist((BlueChess.posX, BlueChess.posY));
+                        int MinDist = GetShortesDist((BlueChess.posX, BlueChess.posY), false);
                         Log($"Min Distance: {MinDist}");
                         SelectedChess = true;
                         SelectedChessObject = BlueChess;
@@ -481,6 +503,7 @@ namespace Koridor
                 }
                 else
                 {
+
                     var possibleMoves = GetAvailableMoves(SelectedChessObject.posX, SelectedChessObject.posY);
                     if (possibleMoves.Contains((clickedX, clickedY)))
                     {
