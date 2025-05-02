@@ -55,7 +55,14 @@ namespace Koridor
 
         private void ToggleWallPlacementMode(object sender, RoutedEventArgs e)
         {
-            if(!SelectedChess) isPlacingWall = !isPlacingWall;
+            if (!SelectedChess)
+            {
+                isPlacingWall = !isPlacingWall;
+                if (!isPlacingWall)
+                {
+                    ClearWallHighlights();
+                }
+            }
             WallModeButton.Background = isPlacingWall ? Brushes.LightGreen : Brushes.White;
             UpdateWallButtons();
         }
@@ -64,12 +71,14 @@ namespace Koridor
         {
             isHorizontalWall = true;
             UpdateWallButtons();
+            ClearWallHighlights();
         }
 
         private void SetVerticalWall(object sender, RoutedEventArgs e)
         {
             isHorizontalWall = false;
             UpdateWallButtons();
+            ClearWallHighlights();
         }
 
         private void AddWall(int x, int y, bool horizontal)
@@ -285,6 +294,7 @@ namespace Koridor
                         Background = Brushes.Transparent,
                         Margin = new Thickness(col * cellWidth, row * cellHeight, 0, 0)
                     };
+                    cellCanvas.MouseMove += CellCanvas_MouseMove;
 
                     // вертикальная линия (левая)
                     Line leftLine = new Line()
@@ -351,6 +361,8 @@ namespace Koridor
                 }
             }
         }
+
+
         private void Log(string message)
         {
             DebugTextBox.Text += message + "\n";
@@ -462,8 +474,72 @@ namespace Koridor
                 }
             }
         }
+        private void CellCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!isPlacingWall) return;
+
+            // Очищаем предыдущие подсветки
+            ClearWallHighlights();
+
+            // Получаем текущую позицию мыши
+            Point mousePos = e.GetPosition(canvas);
+            int cellX = (int)(mousePos.X / cellWidth);
+            int cellY = (int)(mousePos.Y / cellHeight);
+
+            // Проверяем границы поля для стенок
+            if (cellX >= cols - 1 || cellY >= rows - 1) return;
+
+            // Создаем подсветку для потенциальной стенки
+            Rectangle highlight = new Rectangle
+            {
+                Stroke = Brushes.Green,
+                StrokeThickness = 2,
+                Opacity = 0.7
+            };
+
+            if (isHorizontalWall)
+            {
+                // Горизонтальная стенка
+                highlight.Width = cellWidth * 2;
+                highlight.Height = 4;
+                Canvas.SetLeft(highlight, cellX * cellWidth);
+                Canvas.SetTop(highlight, (cellY + 1) * cellHeight - 2);
+            }
+            else
+            {
+                // Вертикальная стенка
+                highlight.Width = 4;
+                highlight.Height = cellHeight * 2;
+                Canvas.SetLeft(highlight, (cellX + 1) * cellWidth - 2);
+                Canvas.SetTop(highlight, cellY * cellHeight);
+            }
+
+            // Проверяем, можно ли здесь поставить стенку
+            if (!CanPlaceWall(cellX, cellY) ||
+                (currentPlayer && int.Parse(RedWallsBox.Text) == 0) ||
+                 (!currentPlayer && int.Parse(BlueWallsBox.Text) == 0))
+            {
+                highlight.Stroke = Brushes.Red;
+            }
+
+            // Добавляем подсветку на canvas и запоминаем ее
+            canvas.Children.Add(highlight);
+            currentWallHighlight = highlight;
+        }
+
+        private Rectangle currentWallHighlight = null;
+
+        private void ClearWallHighlights()
+        {
+            if (currentWallHighlight != null)
+            {
+                canvas.Children.Remove(currentWallHighlight);
+                currentWallHighlight = null;
+            }
+        }
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            ClearWallHighlights();
             Point clickPoint = e.GetPosition(canvas);
 
             int clickedX = (int)(clickPoint.X / cellWidth);
