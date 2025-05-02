@@ -5,23 +5,75 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Koridor"
         mc:Ignorable="d"
-        Title="RulesWindow" Height="800" Width="800">
-
+        Title="RulesWindow1" Height="500" Width="800">
     <Grid>
-        <Border Background="DimGray" Margin="10,10,10,402" CornerRadius="20">
-            <TextBlock Text="Правила игры КОРИДОРЫ:" FontSize="30" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" Margin="0,10,0,0"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="0.15*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <Border Background="DimGray" Margin="10" CornerRadius="20" Grid.Row="0">
+            <TextBlock Text="Правила игры КОРИДОРЫ:" FontSize="30" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" Margin="10"/>
         </Border>
-        <Border Background="LightGray" Margin="0,87,0,10" CornerRadius="20" HorizontalAlignment="Center" Width="780">
-            <TextBlock FontSize="12" Margin="12,10,10,0" Height="377" VerticalAlignment="Top"><Run Text="Подготовка:"/><LineBreak/><Run Text="Перед началом игры игроки берут по одной фишке и 10 перегородок и помещают свои фишки на среднюю "/><LineBreak/><Run Text="клетку первого ряда на своей стороне поля. Игроки бросают жребий и определяют, кто начнёт игру. "/><LineBreak/><Run Text="Ход игры:"/><LineBreak/><Run Text="В свой ход игрок может переместить свою фишку или поставить на поле одну перегородку. "/><LineBreak/><Run Text="Если игрок использовал все перегородки, он продолжает играть только фишкой. "/><LineBreak/><Run Text="Перемещение фишки:"/><LineBreak/><Run Text="Игрок в свой ход может переместить фишку на одну клетку вперёд, назад, вправо или влево. "/><LineBreak/><Run Text="Фишка не может «перепрыгнуть» через перегородку. "/><LineBreak/><Run Text="Установка перегородки:"/><LineBreak/><Run Text="Перегородка ставится так, чтобы закрыть ровно две клетки. Её можно поставить так, чтобы облегчить "/><LineBreak/><Run Text="путь себе, либо препятствовать движению соперника. При этом всегда следует оставить сопернику "/><LineBreak/><Run Text="выход к финишной линии. "/><LineBreak/><Run Text="Лицом к лицу:"/><LineBreak/><Run Text="Если фишки обоих игроков находятся на соседних клетках, и между ними нет перегородки, игрок, "/><LineBreak/><Run Text="которому принадлежит ход, может своей фишкой «перепрыгнуть» через фишку соперника и таким "/><LineBreak/><Run Text="образом переместиться на ещё одну клетку вперёд. Если же сразу за фишкой соперника стоит перегородка,"/><LineBreak/><Run Text="игрок может переместить свою фишку вправо или влево от фишки соперника. "/><LineBreak/><Run Text="Окончание игры:"/><LineBreak/><Run Text="Побеждает тот, кто первым доходит до какой-либо из 9 клеток финишной линии на противоположной стороне игрового "/><LineBreak/><Run Text="поля. "/><LineBreak/><Run Text="Продолжительность игры: 10–20 минут. На соревнованиях можно установить ограничение на продолжительность одного хода."/><LineBreak/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><LineBreak/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><LineBreak/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><LineBreak/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><LineBreak/><Span FontSize="17.333333333333332"/><Span Foreground="#FF1F6BC0" FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span Foreground="#FF1F6BC0" FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><LineBreak/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><LineBreak/><Span FontSize="17.333333333333332"/><Span Foreground="#FF1F6BC0" FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><LineBreak/><Span FontSize="17.333333333333332"/><Span Foreground="#FF1F6BC0" FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><LineBreak/><Span FontSize="17.333333333333332"/><Span Foreground="#FF1F6BC0" FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span Foreground="#FF1F6BC0" FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span Foreground="#FF1F6BC0" FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/><Span FontSize="17.333333333333332"/></TextBlock>
+
+        <!-- Правила игры -->
+        <Border Background="LightGray" Margin="10" CornerRadius="20" HorizontalAlignment="Stretch" Grid.Row="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock FontSize="12" Margin="12,10,10,10" TextWrapping="Wrap">
+                    <Run Text="Подготовка:"/><LineBreak/>
+                    <Run Text="Перед началом игры игроки берут по одной фишке и 10 перегородок и помещают свои фишки на среднюю клетку первого ряда на своей стороне поля. Игроки бросают жребий и определяют, кто начнёт игру.  "/>
+                    <LineBreak/>
+                    <Run Text="Ход игры:"/><LineBreak/>
+                    <Run Text="В свой ход игрок может переместить свою фишку или поставить на поле одну перегородку. "/>
+                    <LineBreak/>
+                    <Run Text="Если игрок использовал все перегородки, он продолжает играть только фишкой. "/>
+                    <LineBreak/>
+                    <Run Text="Перемещение фишки:"/><LineBreak/>
+                    <Run Text="Игрок в свой ход может переместить фишку на одну клетку вперёд, назад, вправо или влево. "/>
+                    <LineBreak/>
+                    <Run Text="Фишка не может «перепрыгнуть» через перегородку. "/>
+                    <LineBreak/>
+                    <Run Text="Установка перегородки:"/><LineBreak/>
+                    <Run Text="Перегородка ставится так, чтобы закрыть ровно две клетки. Её можно поставить так, чтобы облегчить "/>
+                    <LineBreak/>
+                    <Run Text="путь себе, либо препятствовать движению соперника. При этом всегда следует оставить сопернику выход к финишной линии. "/>
+                    <LineBreak/>
+                    <Run Text="Лицом к лицу:"/><LineBreak/>
+                    <Run Text="Если фишки обоих игроков находятся на соседних клетках, и между ними нет перегородки, игрок, "/>
+                    <LineBreak/>
+                    <Run Text="которому принадлежит ход, может своей фишкой «перепрыгнуть» через фишку соперника и таким "/>
+                    <LineBreak/>
+                    <Run Text="образом переместиться на ещё одну клетку вперёд. Если же сразу за фишкой соперника стоит перегородка,"/>
+                    <LineBreak/>
+                    <Run Text="игрок может переместить свою фишку вправо или влево от фишки соперника. "/>
+                    <LineBreak/>
+                    <Run Text="Окончание игры:"/><LineBreak/>
+                    <Run Text="Побеждает тот, кто первым доходит до какой-либо из 9 клеток финишной линии на противоположной стороне игрового поля. "/>
+                    <LineBreak/>
+                    <Run Text="Продолжительность игры: "/><LineBreak/>
+                    <Run Text="10–20 минут. На соревнованиях можно установить ограничение на продолжительность одного хода."/>
+                </TextBlock>
+                
+            </ScrollViewer>
+
+
         </Border>
         <Button Content="Назад в меню" 
+                Grid.Row="2"
                 HorizontalAlignment="Right" 
                 VerticalAlignment="Bottom"
                 Margin="10"
-                Width="200"
-                Height="50"
+                Width="100"
+                Height="25"
                 Click="BackButtonClick"
-                FontSize="24"/>
+                FontSize="14"/>
     </Grid>
-
 </Window>
+
+
+
+
+
+

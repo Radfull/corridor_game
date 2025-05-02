@@ -1,0 +1,24 @@
+﻿<Window x:Class="Koridor.StatisticWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Статистика Игры" Height="400" Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Статистика игр" HorizontalAlignment="Center" Margin="10" FontSize="18" FontWeight="Bold"/>
+
+        <DataGrid x:Name="StatisticsDataGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" Margin="10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Дата игры" Binding="{Binding GameDate}" Width="Auto"/>
+                <DataGridTextColumn Header="Победитель" Binding="{Binding WinnerName}" Width="*"/>
+                <DataGridTextColumn Header="Количество ходов" Binding="{Binding MoveCount}" Width="Auto"/>
+                <DataGridTextColumn Header="Длительность игры" Binding="{Binding GameDuration}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</Window>

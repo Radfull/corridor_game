@@ -45,7 +45,9 @@ namespace Koridor
         }
         void StatisticsButtonClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Здесь будет статистика игры)))!");
+            var statisticWindow = new StatisticWindow();
+            statisticWindow.Show();
+            this.Close();
 
         }
 

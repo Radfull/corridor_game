@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\statistic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\statistic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\statistic.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\statistic.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\menuwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\menuwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\bot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\bot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -15,16 +27,12 @@
       "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\menuwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\menuwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\menuwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|solutionrelative:koridor\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C28FDE3D-1CD7-4876-969B-0F27DFAC4959}|Koridor\\Koridor.csproj|c:\\users\\honor\\desktop\\files\\\u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\koridor\\koridor\\koridor\\mainclasses.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -42,11 +50,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Bot.cs",
               "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\Bot.cs",
               "RelativeDocumentMoniker": "Koridor\\Bot.cs",
@@ -59,8 +67,50 @@
               "EditorCaption": ""
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MenuWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MenuWindow.xaml.cs",
+              "RelativeDocumentMoniker": "Koridor\\MenuWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MenuWindow.xaml.cs",
+              "RelativeToolTip": "Koridor\\MenuWindow.xaml.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAYwDAAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-02T15:01:10.707Z",
+              "EditorCaption": ""
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Statistic.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\Statistic.xaml.cs",
+              "RelativeDocumentMoniker": "Koridor\\Statistic.xaml.cs",
+              "ToolTip": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\Statistic.xaml.cs",
+              "RelativeToolTip": "Koridor\\Statistic.xaml.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAwA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-02T15:00:33.572Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Statistic.xaml",
+              "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\Statistic.xaml",
+              "RelativeDocumentMoniker": "Koridor\\Statistic.xaml",
+              "ToolTip": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\Statistic.xaml",
+              "RelativeToolTip": "Koridor\\Statistic.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-05-02T15:00:12.428Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "RulesWindow.xaml",
               "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\RulesWindow.xaml",
               "RelativeDocumentMoniker": "Koridor\\RulesWindow.xaml",
@@ -71,12 +121,8 @@
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "MenuWindow.xaml",
               "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MenuWindow.xaml",
               "RelativeDocumentMoniker": "Koridor\\MenuWindow.xaml",
@@ -88,44 +134,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "MenuWindow.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MenuWindow.xaml.cs",
-              "RelativeDocumentMoniker": "Koridor\\MenuWindow.xaml.cs",
-              "ToolTip": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MenuWindow.xaml.cs",
-              "RelativeToolTip": "Koridor\\MenuWindow.xaml.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAADEAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-02T14:27:17.102Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "Koridor\\MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainWindow.xaml.cs",
               "RelativeToolTip": "Koridor\\MainWindow.xaml.cs",
-              "ViewState": "AgIAANMBAAAAAAAAAAArwOYBAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-18T12:51:01.611Z"
+              "WhenOpened": "2025-04-18T12:51:01.611Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainWindow.xaml",
               "RelativeDocumentMoniker": "Koridor\\MainWindow.xaml",
               "ToolTip": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainWindow.xaml",
               "RelativeToolTip": "Koridor\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-18T12:51:18.042Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-18T12:51:18.042Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "App.xaml",
               "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\App.xaml",
               "RelativeDocumentMoniker": "Koridor\\App.xaml",
@@ -137,7 +170,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "MainClasses.cs",
               "DocumentMoniker": "C:\\Users\\Honor\\Desktop\\Files\\\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430\\Koridor\\Koridor\\Koridor\\MainClasses.cs",
               "RelativeDocumentMoniker": "Koridor\\MainClasses.cs",

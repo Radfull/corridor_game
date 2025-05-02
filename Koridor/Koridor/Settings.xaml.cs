@@ -1,67 +1,145 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Koridor
 {
-    /// <summary>
-    /// Логика взаимодействия для SettingsWindow.xaml
-    /// </summary>
     public partial class SettingsWindow : Window
     {
-        public enum OpponentType { Friend, Bot }
+        public int SelectedBoardSize { get; set; } = 9;
+        private bool _isBotSelected = true;
 
-        public OpponentType SelectedOpponent { get; private set; }
+        private double _masterVolume = 0.5;
+        private double _musicVolume = 0.5;
+        private double _effectsVolume = 0.5;
 
         public SettingsWindow()
         {
             InitializeComponent();
+            LoadSettingsFromProperties();
+            BotButton.IsChecked = _isBotSelected;
+            FriendButton.IsChecked = !_isBotSelected;
+            this.Closing += SettingsWindow_Closing;
 
-            BotButton.IsChecked = true; //по умолчанию поставила игру с ботом, если кайф можно наоборот 
-            SelectedOpponent = OpponentType.Bot;
-            BotButton.Background = Brushes.DarkGray;
+            MasterVolumeSlider.Value = _masterVolume;
+            MusicVolumeSlider.Value = _musicVolume;
+            EffectsVolumeSlider.Value = _effectsVolume;
+
+            foreach (ComboBoxItem item in BoardSizeComboBox.Items)
+            {
+                if (item.Content.ToString().StartsWith(SelectedBoardSize.ToString()))
+                {
+                    item.IsSelected = true;
+                    break;
+                }
+            }
         }
 
         private void OpponentButton_Click(object sender, RoutedEventArgs e)
         {
-            RadioButton? radioButton = sender as RadioButton;
-
-            if (radioButton != null)
+            if (sender is RadioButton button)
             {
-                FriendButton.Background = Brushes.LightGray;
-                BotButton.Background = Brushes.LightGray;
-
-                radioButton.Background = Brushes.DarkGray;
-
-                if (radioButton == FriendButton)
+                if (button.Name == "BotButton")
                 {
-                    SelectedOpponent = OpponentType.Friend;
+                    _isBotSelected = true;
                 }
-                else if (radioButton == BotButton)
+                else if (button.Name == "FriendButton")
                 {
-                    SelectedOpponent = OpponentType.Bot;
+                    _isBotSelected = false;
                 }
-
-
             }
         }
 
-        public OpponentType GetSelectedOpponent()  //надеюсь так удобнее принимать значение выбора, если нет - сори,
-                                                   //как переделать не знаю, надо смотреть как вам это передоваться будет,
-                                                   //а я хоть и гений програмирования, но все мы не совершенны
+        private void MasterVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            return SelectedOpponent;
+            _masterVolume = MasterVolumeSlider.Value;
+            // Логика изменения общей громкости (если необходимо)
         }
 
+        private void MusicVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _musicVolume = MusicVolumeSlider.Value;
+            // Логика изменения громкости музыки
+        }
+
+        private void EffectsVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            _effectsVolume = EffectsVolumeSlider.Value;
+            // Логика изменения громкости эффектов. победа-проигрыш
+        }
+        private void BoardSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (BoardSizeComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                string sizeString = selectedItem.Content.ToString();
+                SelectedBoardSize = int.Parse(sizeString.Split('x')[0]);
+                Console.WriteLine($"Выбран размер поля: {SelectedBoardSize}x{SelectedBoardSize}");
+            }
+        }
+
+        private void SettingsWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SaveSettingsToProperties();
+        }
+
+        private void SaveSettingsToProperties()
+        {
+            Application.Current.Properties["BoardSize"] = SelectedBoardSize;
+            Application.Current.Properties["IsBotSelected"] = _isBotSelected;
+            Application.Current.Properties["MasterVolume"] = _masterVolume;
+            Application.Current.Properties["MusicVolume"] = _musicVolume;
+            Application.Current.Properties["EffectsVolume"] = _effectsVolume;
+        }
+
+        private void LoadSettingsFromProperties()
+        {
+            //Загружаем размер доски
+            if (Application.Current.Properties["BoardSize"] is int boardSize)
+            {
+                SelectedBoardSize = boardSize;
+            }
+            else
+            {
+                SelectedBoardSize = 9;
+            }
+
+            //Загружаем состояние бота
+            if (Application.Current.Properties["IsBotSelected"] is bool isBot)
+            {
+                _isBotSelected = isBot;
+            }
+            else
+            {
+                _isBotSelected = true;
+            }
+
+            //Настройки громкости
+            if (Application.Current.Properties["MasterVolume"] is double masterVolume)
+            {
+                _masterVolume = masterVolume;
+            }
+            else
+            {
+                _masterVolume = 0.5;
+            }
+
+            if (Application.Current.Properties["MusicVolume"] is double musicVolume)
+            {
+                _musicVolume = musicVolume;
+            }
+            else
+            {
+                _musicVolume = 0.5;
+            }
+
+            if (Application.Current.Properties["EffectsVolume"] is double effectsVolume)
+            {
+                _effectsVolume = effectsVolume;
+            }
+            else
+            {
+                _effectsVolume = 0.5;
+            }
+        }
     }
 }
