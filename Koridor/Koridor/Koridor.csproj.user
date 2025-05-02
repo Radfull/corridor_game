@@ -13,6 +13,9 @@
     <Compile Update="RulesWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Settings.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="MainWindow.xaml">

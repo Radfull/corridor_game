@@ -26,3 +26,5 @@ C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\De
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\RulesWindow.g.cs
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\MenuWindow.baml
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\RulesWindow.baml
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Settings.g.cs
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Settings.baml

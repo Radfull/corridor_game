@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:Koridor"
         mc:Ignorable="d"
 
-        Title="MenuWindow" Height="800" Width="800">
+        Title="MenuWindow" Height="500" Width="800">
     <Grid>
         <Border Background="DimGray" Margin="240,69,240,69" CornerRadius="20">
             <TextBlock Text="КОРИДОРЫ" FontSize="30" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" Margin="0,10,0,0"/>
         </Border>
 
-        <Button Click="RulesButtonClick" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,127,0,217" Width="228" Height="90">
+        <Button Click="RulesButtonClick" HorizontalAlignment="Center" Margin="0,127,0,217" Width="228" Height="90">
             <Button.Style>
                 <Style TargetType="Button">
                     <Setter Property="Background" Value="LightGray"/>
@@ -39,7 +39,7 @@
             <ContentControl Content="ПРАВИЛА ИГРЫ"/>
         </Button>
 
-        <Button Click="GameButtonClick" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,228,0,123" Width="227" Height="90">
+        <Button Click="GameButtonClick" HorizontalAlignment="Center" Margin="0,228,0,123" Width="227" Height="90">
             <Button.Style>
                 <Style TargetType="Button">
                     <Setter Property="Background" Value="LightGray" />
@@ -64,6 +64,60 @@
                 </Style>
             </Button.Style>
             <ContentControl Content="НАЧАТЬ ИГРУ"/>
+        </Button>
+        <!--Дописанная часть кода -->
+        <Button Click="SettingsButtonClick" HorizontalAlignment="Left" Margin="286,345,0,90" Width="48">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="LightGray" />
+                    <Setter Property="FontFamily" Value="Verdana"/>
+                    <Setter Property="FontSize" Value="30"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <Image Source="Img\setting_icon.jpg" Height="30" Width="30"></Image>
+        </Button>
+
+        <Button Click="StatisticsButtonClick" HorizontalAlignment="Left" Width="168" Margin="346,345,0,90">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="LightGray" />
+                    <Setter Property="FontFamily" Value="Verdana"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border CornerRadius="10" Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <ContentControl Content="Глянь статистику;)"/>
         </Button>
     </Grid>
 </Window>

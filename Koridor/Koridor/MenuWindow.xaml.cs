@@ -37,6 +37,17 @@ namespace Koridor
             rulesWindow.Show();
             this.Close();
         }
+        void SettingsButtonClick(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settingWindow = new SettingsWindow();
+            settingWindow.Show();
+
+        }
+        void StatisticsButtonClick(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Здесь будет статистика игры)))!");
+
+        }
 
     }
 }
