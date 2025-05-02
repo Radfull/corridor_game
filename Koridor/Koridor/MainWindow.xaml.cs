@@ -108,55 +108,55 @@ namespace Koridor
 
         private bool CanPlaceWall(int x, int y)
         {
-            // Проверяем границы поля
+            // Проверка границ поля
             if (x >= cols - 1 || y >= rows - 1) return false;
 
-            // Проверяем пересечение с другими стенками
+            // Проверка пересечений с другими стенками
             foreach (var wall in walls)
             {
                 if (isHorizontalWall)
                 {
-                    // Для горизонтальной стенки проверяем пересечение:
-                    // 1. С другими горизонтальными стенками в этом ряду
+                    // Для горизонтальной стенки
                     if (wall.horizontal && wall.y == y &&
                         (wall.x == x || wall.x == x - 1 || wall.x == x + 1))
                         return false;
 
-                    // 2. С вертикальными стенками в точках пересечения
+                    // Проверка пересечения с вертикальными стенками
                     if (!wall.horizontal &&
-                         (wall.x == x && (wall.y == y || wall.y == y - 1)))
+                        ((wall.x == x + 1 && (wall.y == y || wall.y == y + 1)) ||
+                         (wall.x == x && (wall.y == y || wall.y == y + 1))))
                         return false;
                 }
                 else
                 {
-                    // Для вертикальной стенки проверяем пересечение:
-                    // 1. С другими вертикальными стенками в этом столбце
+                    // Для вертикальной стенки
                     if (!wall.horizontal && wall.x == x &&
                         (wall.y == y || wall.y == y - 1 || wall.y == y + 1))
                         return false;
 
-                    // 2. С горизонтальными стенками в точках пересечения
+                    // Проверка пересечения с горизонтальными стенками
                     if (wall.horizontal &&
-                         (wall.y == y && (wall.x == x || wall.x == x - 1)))
+                        ((wall.y == y + 1 && (wall.x == x || wall.x == x + 1)) ||
+                         (wall.y == y && (wall.x == x || wall.x == x + 1))))
                         return false;
                 }
             }
 
-            // Временно добавляем стенку для проверки доступности путей
-            walls.Add((x, y, isHorizontalWall));
+            // Временная установка стенки для проверки
             UpdateGraphWithWall(x, y, isHorizontalWall, true);
+            walls.Add((x, y, isHorizontalWall));
 
-            // Проверяем доступность путей для обеих фишек
+            // Проверка путей для обеих фишек
             bool blueCanReach = GetShortesDist((BlueChess.posX, BlueChess.posY), false) < 1000;
             bool redCanReach = GetShortesDist((RedChess.posX, RedChess.posY), true) < 1000;
 
-            // Удаляем временную стенку
+            // Удаление временной стенки
             walls.RemoveAt(walls.Count - 1);
-            UpdateGraphWithWall(x, y, isHorizontalWall, false); // Восстанавливаем граф
+            UpdateGraphWithWall(x, y, isHorizontalWall, false);
 
             return blueCanReach && redCanReach;
         }
-        
+
 
         private void UpdateGraphWithWall(int x, int y, bool horizontal, bool remove)
         {
