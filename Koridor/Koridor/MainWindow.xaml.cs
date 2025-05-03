@@ -37,6 +37,8 @@ namespace Koridor
         private bool isHorizontalWall = true;
         private List<(int x, int y, bool horizontal)> walls = new List<(int x, int y, bool horizontal)>();
 
+        bool isBotSelected = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -599,6 +601,9 @@ namespace Koridor
                     SelectedChessObject = null;
                 }
             }
+            if(BlueChess.posY == 8) MessageBox.Show("Синия фишка победила!", "Поздравляю");
+            if(RedChess.posY == 0) MessageBox.Show("Красная фишка победила!", "Поздравляю");
+
         }
         private bool IsMoveValid(int startX, int startY, int endX, int endY)
         {

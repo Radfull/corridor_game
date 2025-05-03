@@ -2,8 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 
+
 namespace Koridor
 {
+
     public partial class SettingsWindow : Window
     {
         public int SelectedBoardSize { get; set; } = 9;
