@@ -132,8 +132,7 @@ namespace Koridor
 
                     // Проверка пересечения с вертикальными стенками
                     if (!wall.horizontal &&
-                        ((wall.x == x + 1 && (wall.y == y || wall.y == y + 1)) ||
-                         (wall.x == x && (wall.y == y || wall.y == y + 1))))
+                         wall.x == x && wall.y == y)
                         return false;
                 }
                 else
@@ -145,8 +144,7 @@ namespace Koridor
 
                     // Проверка пересечения с горизонтальными стенками
                     if (wall.horizontal &&
-                        ((wall.y == y + 1 && (wall.x == x || wall.x == x + 1)) ||
-                         (wall.y == y && (wall.x == x || wall.x == x + 1))))
+                         wall.y == y && wall.x == x)
                         return false;
                 }
             }
@@ -169,6 +167,7 @@ namespace Koridor
 
         private void UpdateGraphWithWall(int x, int y, bool horizontal, bool remove)
         {
+
             if (horizontal)
             {
                 if (remove)
@@ -180,7 +179,9 @@ namespace Koridor
                 else
                 {
                     field.AddEdge(new TaggedEdge<(int x, int y), int>((x, y), (x, y + 1), 1));
+                    field.AddEdge(new TaggedEdge<(int x, int y), int>((x, y + 1), (x, y), 1));
                     field.AddEdge(new TaggedEdge<(int x, int y), int>((x + 1, y), (x + 1, y + 1), 1));
+                    field.AddEdge(new TaggedEdge<(int x, int y), int>((x + 1, y + 1), (x + 1, y), 1));
                 }
             }
             else
@@ -195,7 +196,9 @@ namespace Koridor
                 else
                 {
                     field.AddEdge(new TaggedEdge<(int x, int y), int>((x, y), (x + 1, y), 1));
+                    field.AddEdge(new TaggedEdge<(int x, int y), int>((x + 1, y), (x, y), 1));
                     field.AddEdge(new TaggedEdge<(int x, int y), int>((x, y + 1), (x + 1, y + 1), 1));
+                    field.AddEdge(new TaggedEdge<(int x, int y), int>((x + 1, y + 1), (x, y + 1), 1));
                 }
             }
         }
@@ -214,6 +217,8 @@ namespace Koridor
                 field.RemoveEdge(reverseEdge);
             }
         }
+
+
 
         private void MenuButtonClick(object sender, RoutedEventArgs e)
         {
