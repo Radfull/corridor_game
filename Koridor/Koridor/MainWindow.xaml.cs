@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
+
 namespace Koridor
 {
 
@@ -42,6 +43,7 @@ namespace Koridor
         public MainWindow()
         {
             InitializeComponent();
+            UpdateCurrentPlayerDisplay();
             DrawGrid();
             FillField();
             canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
@@ -51,12 +53,28 @@ namespace Koridor
 
         private void UpdateWallButtons()
         {
+            if (!isPlacingWall)
+            {
+                HorizontalWallButton.Background = Brushes.White;
+                VerticalWallButton.Background = Brushes.White;
+            }
+            else
+            {
             HorizontalWallButton.Background = isHorizontalWall ? Brushes.LightGreen : Brushes.White;
             VerticalWallButton.Background = !isHorizontalWall ? Brushes.LightGreen : Brushes.White;
+        }
         }
 
         private void ToggleWallPlacementMode(object sender, RoutedEventArgs e)
         {
+            if ((currentPlayer && int.Parse(RedWallsBox.Text) == 0) ||
+                (!currentPlayer && int.Parse(BlueWallsBox.Text) == 0))
+            {
+                isPlacingWall = false;
+                WallModeButton.Background = Brushes.White;
+                return;
+            }
+
             if (!SelectedChess)
             {
                 isPlacingWall = !isPlacingWall;
@@ -68,7 +86,22 @@ namespace Koridor
             WallModeButton.Background = isPlacingWall ? Brushes.LightGreen : Brushes.White;
             UpdateWallButtons();
         }
+        private void SwitchPlayer()
+        {
+            currentPlayer = !currentPlayer;
+            UpdateCurrentPlayerDisplay();
+            ResetWallButtons(); // Сбрасываем кнопки стенок при смене хода
+        }
 
+        private void ResetWallButtons()
+        {
+            isPlacingWall = false;
+            isHorizontalWall = true;
+            WallModeButton.Background = Brushes.White;
+            HorizontalWallButton.Background = Brushes.White;
+            VerticalWallButton.Background = Brushes.White;
+            ClearWallHighlights();
+        }
         private void SetHorizontalWall(object sender, RoutedEventArgs e)
         {
             isHorizontalWall = true;
@@ -115,8 +148,27 @@ namespace Koridor
             canvas.Children.Add(wall);
             walls.Add((x, y, horizontal));
             UpdateGraphWithWall(x, y, horizontal, true);
+            SwitchPlayer();
         }
-
+        private void UpdateCurrentPlayerDisplay()
+        {
+            if (currentPlayer) // Красный игрок
+            {
+                CurrentPlayerText.Text = "Ход: Красный игрок";
+                CurrentPlayerText.Foreground = Brushes.Red;
+                RedWallsBox.BorderThickness = new Thickness(3);
+                RedWallsBox.BorderBrush = Brushes.Red;
+                BlueWallsBox.BorderThickness = new Thickness(0);
+            }
+            else // Синий игрок
+            {
+                CurrentPlayerText.Text = "Ход: Синий игрок";
+                CurrentPlayerText.Foreground = Brushes.Blue;
+                BlueWallsBox.BorderThickness = new Thickness(3);
+                BlueWallsBox.BorderBrush = Brushes.Blue;
+                RedWallsBox.BorderThickness = new Thickness(0);
+            }
+        }
         private bool CanPlaceWall(int x, int y)
         {
             // Проверка границ поля
@@ -237,7 +289,7 @@ namespace Koridor
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    field.AddVertex((i,j));
+                    field.AddVertex((i, j));
 
                 }
             }
@@ -268,7 +320,7 @@ namespace Koridor
 
             for (int i = 0; i < cols; i++)
             {
-                if (dijkstra.Distances.TryGetValue((i,(red) ? 0 : 8), out double distance) && distance < MinDist) MinDist = (int)distance;
+                if (dijkstra.Distances.TryGetValue((i, (red) ? 0 : 8), out double distance) && distance < MinDist) MinDist = (int)distance;
 
             }
             
@@ -278,6 +330,7 @@ namespace Koridor
         {
             UpdateGrid();
         }
+
 
         private void DrawGrid()
         {
@@ -592,7 +645,8 @@ namespace Koridor
                     {
                             MoveChess(SelectedChessObject, clickedX, clickedY);
                             Log($"Moved to ({clickedX}, {clickedY})");
-                        currentPlayer = !currentPlayer;
+                        SwitchPlayer();
+                        UpdateCurrentPlayerDisplay();
                         Log($"Current player: {(currentPlayer ? "red" : "blue")}");
                     }
 
@@ -601,8 +655,8 @@ namespace Koridor
                     SelectedChessObject = null;
                 }
             }
-            if(BlueChess.posY == 8) MessageBox.Show("Синия фишка победила!", "Поздравляю");
-            if(RedChess.posY == 0) MessageBox.Show("Красная фишка победила!", "Поздравляю");
+            if (BlueChess.posY == 8) MessageBox.Show("Синия фишка победила!", "Поздравляю");
+            if (RedChess.posY == 0) MessageBox.Show("Красная фишка победила!", "Поздравляю");
 
         }
         private bool IsMoveValid(int startX, int startY, int endX, int endY)
@@ -765,6 +819,11 @@ namespace Koridor
                     cellCanvas.Background = Brushes.Transparent;
                 }
             }
+        }
+
+        private void DebugTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 
