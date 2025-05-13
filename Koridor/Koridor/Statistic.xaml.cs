@@ -2,21 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Collections.Generic;
 
 namespace Koridor
 {
-    /// <summary>
-    /// Interaction logic for StatisticWindow.xaml
-    /// </summary>
-    public partial class StatisticWindow : Window
+    public partial class StatsWindow : Window
     {
-        public ObservableCollection<GameStatistic> GameStatistics { get; set; }
-
-        public StatisticWindow()
+        public StatsWindow(List<GameStats> stats)
         {
             InitializeComponent();
-            GameStatistics = new ObservableCollection<GameStatistic>();
-            StatisticsDataGrid.ItemsSource = GameStatistics;
+            StatsDataGrid.ItemsSource = stats.OrderByDescending(s => s.GameDate).ToList();
         }
 
         void StatisticsButtonClick(object sender, RoutedEventArgs e)
@@ -29,13 +24,5 @@ namespace Koridor
         {
             this.Close();
         }
-    }
-
-    public class GameStatistic
-    {
-        public DateTime GameDate { get; set; }
-        public string WinnerName { get; set; }
-        public int MoveCount { get; set; }
-        public TimeSpan GameDuration { get; set; }
     }
 }

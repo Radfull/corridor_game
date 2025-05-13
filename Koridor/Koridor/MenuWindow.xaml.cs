@@ -1,3 +1,4 @@
+﻿using Newtonsoft.Json;
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace Koridor
 {
@@ -19,9 +21,12 @@ namespace Koridor
     /// </summary>
     public partial class MenuWindow : Window
     {
+       
+
         public MenuWindow()
         {
             InitializeComponent();
+            LoadGameStats();
         }
 
         private void GameButtonClick(object sender, RoutedEventArgs e)
@@ -43,13 +48,53 @@ namespace Koridor
             settingWindow.Show();
 
         }
-        void StatisticsButtonClick(object sender, RoutedEventArgs e)
+        private void StatisticsButtonClick(object sender, RoutedEventArgs e)
         {
-            var statisticWindow = new StatisticWindow();
-            statisticWindow.Show();
-            this.Close();
+            try
+            {
+                string filePath = "game_stats.json";
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    var allStats = JsonConvert.DeserializeObject<List<GameStats>>(json)
+                                  ?? new List<GameStats>();
 
+                    // Сортируем по дате (новые сверху)
+                    allStats = allStats.OrderByDescending(s => s.GameDate).ToList();
+
+                    var statsWindow = new StatsWindow(allStats);
+                    statsWindow.ShowDialog();
+        }
+                else
+                {
+                    MessageBox.Show("Статистика игр пока отсутствует.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке статистики: {ex.Message}");
+            }
         }
 
+        private List<GameStats> gameHistory = new List<GameStats>();
+
+        private void LoadGameStats()
+        {
+            string filePath = "game_stats.json";
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    gameHistory = JsonConvert.DeserializeObject<List<GameStats>>(json)
+                                  ?? new List<GameStats>();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке статистики: {ex.Message}");
+                gameHistory = new List<GameStats>();
+            }
+        }
     }
 }

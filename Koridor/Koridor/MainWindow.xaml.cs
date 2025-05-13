@@ -6,6 +6,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Xml;
+using System.IO;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+using System.Collections.Generic;
 
 
 namespace Koridor
@@ -40,9 +45,14 @@ namespace Koridor
 
         bool isBotSelected = false;
 
+        private DateTime gameStartTime;
+        private int totalMoves = 0;
+        private List<GameStats> gameHistory = new List<GameStats>();
+
         public MainWindow()
         {
             InitializeComponent();
+            gameStartTime = DateTime.Now;
             UpdateCurrentPlayerDisplay();
             DrawGrid();
             FillField();
@@ -640,10 +650,63 @@ namespace Koridor
                     SelectedChessObject = null;
                 }
             }
-            if (BlueChess.posY == 8) MessageBox.Show("Синия фишка победила!", "Поздравляю");
-            if (RedChess.posY == 0) MessageBox.Show("Красная фишка победила!", "Поздравляю");
+            if (BlueChess.posY == 8 || RedChess.posY == 0)
+            {
+                var winner = BlueChess.posY == 8 ? "Blue" : "Red";
+                var stats = new GameStats
+                {
+                    GameDate = DateTime.Now,
+                    Winner = winner,
+                    TotalMoves = totalMoves,
+                    Duration = DateTime.Now - gameStartTime,
+                    RedWallsUsed = 10 - int.Parse(RedWallsBox.Text),
+                    BlueWallsUsed = 10 - int.Parse(BlueWallsBox.Text)
+                };
 
+                SaveGameStats(stats);
+
+                MessageBox.Show($"{winner} фишка победила!", "Поздравляю");
+            }
         }
+        private void SaveGameStats(GameStats stats)
+        {
+            try
+            {
+                // Загружаем текущую историю
+                var fullHistory = LoadAllGameStats();
+
+                // Добавляем новую запись
+                fullHistory.Add(stats);
+
+                // Сохраняем обновленную историю
+                string json = JsonConvert.SerializeObject(fullHistory, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText("game_stats.json", json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении статистики: {ex.Message}");
+            }
+        }
+
+        private List<GameStats> LoadAllGameStats()
+        {
+            string filePath = "game_stats.json";
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    return JsonConvert.DeserializeObject<List<GameStats>>(json)
+                           ?? new List<GameStats>();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке статистики: {ex.Message}");
+            }
+            return new List<GameStats>();
+        }
+
         private bool IsMoveValid(int startX, int startY, int endX, int endY)
         {
             // Проверка выхода за границы поля
