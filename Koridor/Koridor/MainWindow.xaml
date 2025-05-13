@@ -37,17 +37,6 @@
                     <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-                <TextBox x:Name="DebugTextBox"
-                          Grid.Column="1"
-                          IsReadOnly="True" 
-                          TextWrapping="Wrap" 
-                          AcceptsReturn="True" 
-                          Background="Black" 
-                          Foreground="White"
-                          Margin="97,77,443,0"
-                          VerticalAlignment="Top"
-                          Height="100"/>
-
                 <Canvas Name="canvas" 
                         Grid.Column="1"
                         Width="600" Height="600" 

@@ -421,13 +421,6 @@ namespace Koridor
                 }
             }
         }
-
-
-        private void Log(string message)
-        {
-            DebugTextBox.Text += message + "\n";
-            DebugTextBox.ScrollToEnd();
-        }
         private void UpdateGrid()
         {
             canvasWidth = canvas.ActualWidth;
@@ -610,22 +603,16 @@ namespace Koridor
                 if (clickedX < cols - 1 && clickedY < rows - 1 && CanPlaceWall(clickedX, clickedY) && ((currentPlayer && int.Parse(RedWallsBox.Text) > 0) ||
                     (!currentPlayer && int.Parse(BlueWallsBox.Text) > 0)))
                 {
-
                     AddWall(clickedX, clickedY, isHorizontalWall);
-                    currentPlayer = !currentPlayer; // Передаем ход
-                    Log($"Wall placed at ({clickedX}, {clickedY},{isHorizontalWall}),{(currentPlayer ? "red" : "blue")}");
                 }
             }
             else
             {
-
-                Log($"Clicked at ({clickedX}, {clickedY})");
                 if (!SelectedChess)
                 {
                     if (clickedX == BlueChess.posX && clickedY == BlueChess.posY && !currentPlayer)
                     {
                         int MinDist = GetShortesDist((BlueChess.posX, BlueChess.posY), false);
-                        Log($"Min Distance: {MinDist}");
                         SelectedChess = true;
                         SelectedChessObject = BlueChess;
                         HighlightAvailableMoves(GetAvailableMoves(clickedX, clickedY));
@@ -644,10 +631,8 @@ namespace Koridor
                     if (possibleMoves.Contains((clickedX, clickedY)))
                     {
                             MoveChess(SelectedChessObject, clickedX, clickedY);
-                            Log($"Moved to ({clickedX}, {clickedY})");
                         SwitchPlayer();
                         UpdateCurrentPlayerDisplay();
-                        Log($"Current player: {(currentPlayer ? "red" : "blue")}");
                     }
 
                     ClearHighlights();
@@ -820,11 +805,5 @@ namespace Koridor
                 }
             }
         }
-
-        private void DebugTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
     }
-
 }
