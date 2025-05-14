@@ -7,60 +7,72 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="800"
         SizeChanged="MainSizeChanged">
-    <Grid>
+
+    <Viewbox Stretch="Uniform">
+        <Grid Width="800" Height="800">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <TextBox Name="BlueWallsBox"
+                        Width="80" Height="60"
+                        IsReadOnly="True" Text="10" FontSize="36" 
+                        TextAlignment="Center" VerticalContentAlignment="Center"
+                        Background="Blue" Foreground="White" Margin="105,32,615,628"
+                        BorderBrush="DarkBlue" BorderThickness="2" Grid.RowSpan="2"/>   
+            
+            <TextBox Name="RedWallsBox"
+                         Width="80" Height="60"
+                         IsReadOnly="True" Text="10" FontSize="36" 
+                         TextAlignment="Center" VerticalContentAlignment="Center"
+                         Background="Red" Foreground="White" Margin="615,32,105,628"
+                         BorderBrush="DarkRed" BorderThickness="2" Grid.RowSpan="2"/>
+
+            <Grid Grid.Row="1" Margin="20">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2.5*"></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition Width="2.5*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="2*"></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition Height="3*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Canvas Name="canvas" Grid.Row="1" Grid.Column="1" Grid.RowSpan="9" Grid.ColumnSpan="9" Background="Gray"/>
 
-        <TextBox Name="DebugTextBox" 
-                 Grid.Row="0" Grid.Column="0"
-                 IsReadOnly="True" TextWrapping="Wrap" 
-                 AcceptsReturn="True" Background="Black" Foreground="White"/>
-        <TextBox Name ="BlueWallsBox" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" 
-                 IsReadOnly="True" Text="10" FontSize="36" TextAlignment="Center"
-                 Background="Blue"/>
-        <TextBox Name ="RedWallsBox" Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="2" 
-                 IsReadOnly="True" Text="10" FontSize="36" TextAlignment="Center"
-                 Background="Red"/>
+                <Canvas Name="canvas" 
+                        Grid.Column="1"
+                        Width="600" Height="600" 
+                        Background="Gray"/>
+
+            </Grid>
         
-        <Button Name="WallModeButton" Content="Режим стенок" 
-                Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="3"
-                FontSize="16" Click="ToggleWallPlacementMode"/>
+            <UniformGrid Grid.Row="2" Rows="1" Columns="4" HorizontalAlignment="Center" Margin="10">
+                <Button Name="WallModeButton" 
+                        Content="Режим стенок" 
+                        Width="180" Height="50" Margin="5"
+                        FontSize="18" Click="ToggleWallPlacementMode"/>
 
-        <Button Name="HorizontalWallButton" Content="Горизонтальная" 
-                Grid.Row="10" Grid.Column="4" Grid.ColumnSpan="2"
-                FontSize="16" Click="SetHorizontalWall"/>
+                <Button Name="HorizontalWallButton" 
+                        Content="Горизонтальная" 
+                        Width="180" Height="50" Margin="5"
+                        FontSize="18" Click="SetHorizontalWall"/>
 
-        <Button Name="VerticalWallButton" Content="Вертикальная" 
-                Grid.Row="10" Grid.Column="6" Grid.ColumnSpan="2"
-                FontSize="16" Click="SetVerticalWall"/>
+                <Button Name="VerticalWallButton" 
+                        Content="Вертикальная" 
+                        Width="180" Height="50" Margin="5"
+                        FontSize="18" Click="SetVerticalWall"/>
 
         <Button Content="Меню" 
-                Grid.Row="10" Grid.Column="9" Grid.ColumnSpan="2"
-                FontSize="16" Click="MenuButtonClick"/>
+                        Width="180" Height="50" Margin="5"
+                        FontSize="18" Click="MenuButtonClick"/>
+            </UniformGrid>
+            <TextBlock x:Name="CurrentPlayerText"
+                          Text="Ход: Синий игрок" 
+                          FontSize="38"
+                          FontWeight="Bold"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Foreground="Blue"
+                          Margin="0,40,0,0"/>
     </Grid>
+    </Viewbox>
+    
 </Window>

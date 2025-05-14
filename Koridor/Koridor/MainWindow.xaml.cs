@@ -6,15 +6,21 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Xml;
+using System.IO;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+using System.Collections.Generic;
+
 
 namespace Koridor
 {
 
     public partial class MainWindow : Window
     {
-        public int cols;
-        public int rows;
-        int ind;
+        static int cols = 9;
+        static int rows = 9;
+        int ind = cols * rows;
         List<Line> vertLines = new List<Line>();
         List<Line> horizontLines = new List<Line>();
         double canvasWidth;
@@ -22,44 +28,64 @@ namespace Koridor
         double cellWidth;
         double cellHeight;
 
-        public Chess BlueChess = new Chess(4, 0, false);
-        public Chess RedChess = new Chess(4, 8, true);
+        Chess BlueChess = new Chess(4, 0, false);
+        Chess RedChess = new Chess(4, 8, true);
         Ellipse BlueChessElp = new Ellipse();
         Ellipse RedChessElp = new Ellipse();
 
-        public bool currentPlayer = true; // true = красный, false = синий
+        private bool currentPlayer = true; // true = красный, false = синий
         bool SelectedChess = false;
         Chess SelectedChessObject;
 
-        public AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>> field = new AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>>();
+        AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>> field = new AdjacencyGraph<(int x, int y), TaggedEdge<(int x, int y), int>>();
 
         private bool isPlacingWall = false;
         private bool isHorizontalWall = true;
         private List<(int x, int y, bool horizontal)> walls = new List<(int x, int y, bool horizontal)>();
 
-        bool isBotSelected = true;
+        bool isBotSelected = false;
+
+        private DateTime gameStartTime;
+        private int totalMoves = 0;
+        private List<GameStats> gameHistory = new List<GameStats>();
 
         public MainWindow()
         {
             InitializeComponent();
-            canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
+            gameStartTime = DateTime.Now;
+            totalMoves = 0;
+            UpdateCurrentPlayerDisplay();
             DrawGrid();
             FillField();
+            canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
             UpdateWallButtons();
 
-            rows = 9;
-            cols = 9;
-            ind = cols * rows;
         }
 
         private void UpdateWallButtons()
         {
+            if (!isPlacingWall)
+            {
+                HorizontalWallButton.Background = Brushes.White;
+                VerticalWallButton.Background = Brushes.White;
+            }
+            else
+            {
             HorizontalWallButton.Background = isHorizontalWall ? Brushes.LightGreen : Brushes.White;
             VerticalWallButton.Background = !isHorizontalWall ? Brushes.LightGreen : Brushes.White;
+        }
         }
 
         private void ToggleWallPlacementMode(object sender, RoutedEventArgs e)
         {
+            if ((currentPlayer && int.Parse(RedWallsBox.Text) == 0) ||
+                (!currentPlayer && int.Parse(BlueWallsBox.Text) == 0))
+            {
+                isPlacingWall = false;
+                WallModeButton.Background = Brushes.White;
+                return;
+            }
+
             if (!SelectedChess)
             {
                 isPlacingWall = !isPlacingWall;
@@ -71,7 +97,22 @@ namespace Koridor
             WallModeButton.Background = isPlacingWall ? Brushes.LightGreen : Brushes.White;
             UpdateWallButtons();
         }
+        private void SwitchPlayer()
+        {
+            currentPlayer = !currentPlayer;
+            UpdateCurrentPlayerDisplay();
+            ResetWallButtons(); // Сбрасываем кнопки стенок при смене хода
+        }
 
+        private void ResetWallButtons()
+        {
+            isPlacingWall = false;
+            isHorizontalWall = true;
+            WallModeButton.Background = Brushes.White;
+            HorizontalWallButton.Background = Brushes.White;
+            VerticalWallButton.Background = Brushes.White;
+            ClearWallHighlights();
+        }
         private void SetHorizontalWall(object sender, RoutedEventArgs e)
         {
             isHorizontalWall = true;
@@ -86,8 +127,9 @@ namespace Koridor
             ClearWallHighlights();
         }
 
-        public void AddWall(int x, int y, bool horizontal)
+        private void AddWall(int x, int y, bool horizontal)
         {
+            totalMoves++;
             Rectangle wall = new Rectangle
             {
                 Fill = Brushes.Black,
@@ -96,14 +138,10 @@ namespace Koridor
             };
             if (currentPlayer)
             {
-                RedChess.WallsCount -= 1;
-                RedWallsBox.Text = (RedChess.WallsCount).ToString();
+                RedWallsBox.Text = (int.Parse(RedWallsBox.Text) - 1).ToString();
             }
-            else
-            {
-                BlueChess.WallsCount -= 1;
-                BlueWallsBox.Text = (BlueChess.WallsCount).ToString();
-            }
+            else BlueWallsBox.Text = (int.Parse(BlueWallsBox.Text) - 1).ToString();
+
             if (horizontal)
             {
                 wall.Width = cellWidth * 2;
@@ -122,9 +160,28 @@ namespace Koridor
             canvas.Children.Add(wall);
             walls.Add((x, y, horizontal));
             UpdateGraphWithWall(x, y, horizontal, true);
+            SwitchPlayer();
         }
-
-        public bool CanPlaceWall(int x, int y)
+        private void UpdateCurrentPlayerDisplay()
+        {
+            if (currentPlayer) // Красный игрок
+            {
+                CurrentPlayerText.Text = "Ход: Красный игрок";
+                CurrentPlayerText.Foreground = Brushes.Red;
+                RedWallsBox.BorderThickness = new Thickness(3);
+                RedWallsBox.BorderBrush = Brushes.Red;
+                BlueWallsBox.BorderThickness = new Thickness(0);
+            }
+            else // Синий игрок
+            {
+                CurrentPlayerText.Text = "Ход: Синий игрок";
+                CurrentPlayerText.Foreground = Brushes.Blue;
+                BlueWallsBox.BorderThickness = new Thickness(3);
+                BlueWallsBox.BorderBrush = Brushes.Blue;
+                RedWallsBox.BorderThickness = new Thickness(0);
+            }
+        }
+        private bool CanPlaceWall(int x, int y)
         {
             // Проверка границ поля
             if (x >= cols - 1 || y >= rows - 1) return false;
@@ -244,7 +301,7 @@ namespace Koridor
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    field.AddVertex((i,j));
+                    field.AddVertex((i, j));
 
                 }
             }
@@ -275,7 +332,7 @@ namespace Koridor
 
             for (int i = 0; i < cols; i++)
             {
-                if (dijkstra.Distances.TryGetValue((i,(red) ? 0 : 8), out double distance) && distance < MinDist) MinDist = (int)distance;
+                if (dijkstra.Distances.TryGetValue((i, (red) ? 0 : 8), out double distance) && distance < MinDist) MinDist = (int)distance;
 
             }
             
@@ -286,13 +343,12 @@ namespace Koridor
             UpdateGrid();
         }
 
+
         private void DrawGrid()
         {
             canvas.Children.Clear();
             vertLines.Clear();
             horizontLines.Clear();
-            BlueChess.WallsCount = 10;
-            RedChess.WallsCount = 10;
 
             canvasWidth = canvas.ActualWidth;
             canvasHeight = canvas.ActualHeight;
@@ -377,13 +433,6 @@ namespace Koridor
                 }
             }
         }
-
-
-        private void Log(string message)
-        {
-            DebugTextBox.Text += message + "\n";
-            DebugTextBox.ScrollToEnd();
-        }
         private void UpdateGrid()
         {
             canvasWidth = canvas.ActualWidth;
@@ -391,14 +440,13 @@ namespace Koridor
             cellWidth = canvasWidth / cols;
             cellHeight = canvasHeight / rows;
 
-            // Используем фактическое количество элементов, а не cols*rows
-            for (int i = 0; i < canvas.Children.Count; i++)
+            for (int i = 0; i < ind; i++)
             {
+                int row = i / cols;
+                int col = i % cols;
+
                 if (canvas.Children[i] is Canvas cellCanvas)
                 {
-                    int row = i / cols;
-                    int col = i % cols;
-
                     cellCanvas.Width = cellWidth;
                     cellCanvas.Height = cellHeight;
                     cellCanvas.Margin = new Thickness(col * cellWidth, row * cellHeight, 0, 0);
@@ -493,7 +541,7 @@ namespace Koridor
         }
         private void CellCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!isPlacingWall || (!currentPlayer && isBotSelected)) return;
+            if (!isPlacingWall) return;
 
             // Очищаем предыдущие подсветки
             ClearWallHighlights();
@@ -533,8 +581,8 @@ namespace Koridor
 
             // Проверяем, можно ли здесь поставить стенку
             if (!CanPlaceWall(cellX, cellY) ||
-                (currentPlayer && RedChess.WallsCount == 0) ||
-                 (!currentPlayer && BlueChess.WallsCount == 0))
+                (currentPlayer && int.Parse(RedWallsBox.Text) == 0) ||
+                 (!currentPlayer && int.Parse(BlueWallsBox.Text) == 0))
             {
                 highlight.Stroke = Brushes.Red;
             }
@@ -562,28 +610,21 @@ namespace Koridor
             int clickedX = (int)(clickPoint.X / cellWidth);
             int clickedY = (int)(clickPoint.Y / cellHeight);
 
-
             if (isPlacingWall)
             {
-                if (CanPlaceWall(clickedX, clickedY) && ((currentPlayer && RedChess.WallsCount > 0) ||
-                    (!currentPlayer && BlueChess.WallsCount > 0)))
+                if (clickedX < cols - 1 && clickedY < rows - 1 && CanPlaceWall(clickedX, clickedY) && ((currentPlayer && int.Parse(RedWallsBox.Text) > 0) ||
+                    (!currentPlayer && int.Parse(BlueWallsBox.Text) > 0)))
                 {
-
                     AddWall(clickedX, clickedY, isHorizontalWall);
-                    currentPlayer = !currentPlayer; // Передаем ход
-                    Log($"Wall placed at ({clickedX}, {clickedY},{isHorizontalWall}),{(currentPlayer ? "red" : "blue")}");
                 }
             }
             else
             {
-
-                Log($"Clicked at ({clickedX}, {clickedY})");
                 if (!SelectedChess)
                 {
                     if (clickedX == BlueChess.posX && clickedY == BlueChess.posY && !currentPlayer)
                     {
                         int MinDist = GetShortesDist((BlueChess.posX, BlueChess.posY), false);
-                        Log($"Min Distance: {MinDist}");
                         SelectedChess = true;
                         SelectedChessObject = BlueChess;
                         HighlightAvailableMoves(GetAvailableMoves(clickedX, clickedY));
@@ -602,9 +643,8 @@ namespace Koridor
                     if (possibleMoves.Contains((clickedX, clickedY)))
                     {
                             MoveChess(SelectedChessObject, clickedX, clickedY);
-                            Log($"Moved to ({clickedX}, {clickedY})");
-                        currentPlayer = !currentPlayer;
-                        Log($"Current player: {(currentPlayer ? "red" : "blue")}");
+                        SwitchPlayer();
+                        UpdateCurrentPlayerDisplay();
                     }
 
                     ClearHighlights();
@@ -612,11 +652,63 @@ namespace Koridor
                     SelectedChessObject = null;
                 }
             }
-            //if (!currentPlayer && isBotSelected) MakeBotMove();
-            if(BlueChess.posY == 8) MessageBox.Show("Синия фишка победила!", "Поздравляю");
-            if(RedChess.posY == 0) MessageBox.Show("Красная фишка победила!", "Поздравляю");
+            if (BlueChess.posY == 8 || RedChess.posY == 0)
+            {
+                var winner = BlueChess.posY == 8 ? "Blue" : "Red";
+                var stats = new GameStats
+                {
+                    GameDate = DateTime.Now,
+                    Winner = winner,
+                    TotalMoves = totalMoves,
+                    Duration = DateTime.Now - gameStartTime,
+                    RedWallsUsed = 10 - int.Parse(RedWallsBox.Text),
+                    BlueWallsUsed = 10 - int.Parse(BlueWallsBox.Text)
+                };
 
+                SaveGameStats(stats);
+
+                MessageBox.Show($"{winner} фишка победила!", "Поздравляю");
+            }
         }
+        private void SaveGameStats(GameStats stats)
+        {
+            try
+            {
+                // Загружаем текущую историю
+                var fullHistory = LoadAllGameStats();
+
+                // Добавляем новую запись
+                fullHistory.Add(stats);
+
+                // Сохраняем обновленную историю
+                string json = JsonConvert.SerializeObject(fullHistory, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText("game_stats.json", json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении статистики: {ex.Message}");
+            }
+        }
+
+        private List<GameStats> LoadAllGameStats()
+        {
+            string filePath = "game_stats.json";
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    return JsonConvert.DeserializeObject<List<GameStats>>(json)
+                           ?? new List<GameStats>();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке статистики: {ex.Message}");
+            }
+            return new List<GameStats>();
+        }
+
         private bool IsMoveValid(int startX, int startY, int endX, int endY)
         {
             // Проверка выхода за границы поля
@@ -666,7 +758,7 @@ namespace Koridor
                 int leftX = Math.Min(x1, x2);
                 return walls.Any(w =>
                     (w.x == leftX && w.y == y1 && !w.horizontal) ||
-                    (w.x == leftX && w.y == y1 - 1 && !w.horizontal) ); // Вертикальная стенка
+                    (w.x == leftX && w.y == y1 - 1 && !w.horizontal)); // Вертикальная стенка
             }
             // Вертикальное перемещение
             else if (x1 == x2)
@@ -680,8 +772,9 @@ namespace Koridor
             return false;
         }
 
-        public void MoveChess(Chess chess, int endX, int endY)
+        private void MoveChess(Chess chess, int endX, int endY)
         {
+            totalMoves++;
             // Проверка на прыжок через фишку
             if ((endX == BlueChess.posX && endY == BlueChess.posY) ||
                 (endX == RedChess.posX && endY == RedChess.posY))
@@ -720,7 +813,7 @@ namespace Koridor
                 newCell.Children.Add(chess.red ? RedChessElp : BlueChessElp);
             }
         }
-        public List<(int x, int y)> GetAvailableMoves(int startX, int startY, bool include_state=true)
+        private List<(int x, int y)> GetAvailableMoves(int startX, int startY)
         {
             var possibleMoves = new List<(int x, int y)>();
             var directions = new List<(int dx, int dy)> { (0, -1), (0, 1), (-1, 0), (1, 0) };
@@ -770,7 +863,7 @@ namespace Koridor
 
         private void ClearHighlights()
         {
-            for (int i = 0; i < canvas.Children.Count; i++)
+            for (int i = 0; i < ind; i++)
             {
                 if (canvas.Children[i] is Canvas cellCanvas)
                 {
@@ -778,50 +871,5 @@ namespace Koridor
                 }
             }
         }
-
-        // Методы для бота
-
-        // Дописать
-
-        private List<(int x, int y, bool horizontal)> GetAllAvailableWallPlacemets(bool include_state)
-        {
-            bool temp = isHorizontalWall;
-            List<(int x, int y, bool horizontal)> moves = new List<(int x, int y, bool horizontal)>();
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < cols; j++)
-                {
-                    isHorizontalWall = true;
-                    if (CanPlaceWall(i, j)) moves.Add((i, j, true));
-                    isHorizontalWall = false;
-                    if (CanPlaceWall(i, j)) moves.Add((i, j, false));
-
-                }
-            }
-            isHorizontalWall = temp;
-            return moves;
-        }
-        public List<List<(bool player_move, int x, int y, bool horizontal)>> GetAllChildStates(bool player_one_maximizer, bool include_state = true)
-        {
-            List<List<(bool player_move, int x, int y, bool horizontal)>> children = new List<List<(bool player_move, int x, int y, bool horizontal)>>();
-
-            List<(bool player_move, int x, int y, bool horizontal)> action = new List<(bool player_move, int x, int y, bool horizontal)>();
-
-            foreach ((int x, int y) in GetAvailableMoves((player_one_maximizer) ? BlueChess.posX: RedChess.posX , (player_one_maximizer) ? BlueChess.posY: RedChess.posY, include_state))
-            {
-                action.Add((true, x, y, false));
-                children.Add(action);
-            }
-
-            foreach ((int x, int y, bool h) in GetAllAvailableWallPlacemets(include_state))
-            {
-                action.Add((false, x,y,h));
-                children.Add(action);
-            }
-
-
-            return children;
-        }
     }
-
 }

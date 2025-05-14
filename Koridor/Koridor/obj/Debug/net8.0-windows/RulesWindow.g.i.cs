@@ -53,7 +53,7 @@ namespace Koridor {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Koridor;component/ruleswindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Koridor;V1.0.0.0;component/ruleswindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\RulesWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
