@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Koridor")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+985fe85221898efcc289f7faba3f055a1ddfd762")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd2ddc33e79bbd1c7f6ea8fa0cae4fe68972a542")]
 [assembly: System.Reflection.AssemblyProductAttribute("Koridor")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Koridor")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

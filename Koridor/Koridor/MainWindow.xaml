@@ -41,7 +41,11 @@
                         Grid.Column="1"
                         Width="600" Height="600" 
                         Background="Gray"/>
-
+                <MediaElement x:Name="BackgroundMusic" 
+                   Volume="1.0"
+                   LoadedBehavior="Manual" 
+                   UnloadedBehavior="Stop"
+                   Visibility="Collapsed"/>
             </Grid>
         
             <UniformGrid Grid.Row="2" Rows="1" Columns="4" HorizontalAlignment="Center" Margin="10">
@@ -76,3 +80,4 @@
     </Viewbox>
     
 </Window>
+    

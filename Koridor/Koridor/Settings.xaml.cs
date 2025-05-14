@@ -43,11 +43,12 @@ namespace Koridor
             {
                 if (button.Name == "BotButton")
                 {
-                    _isBotSelected = true;
+                    AppSettings.IsBotSelected = true;
                 }
                 else if (button.Name == "FriendButton")
                 {
-                    _isBotSelected = false;
+                    AppSettings.IsBotSelected = false;
+
                 }
             }
         }
@@ -60,14 +61,12 @@ namespace Koridor
 
         private void MusicVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            _musicVolume = MusicVolumeSlider.Value;
-            // Логика изменения громкости музыки
+            AppSettings.MusicVolume = MusicVolumeSlider.Value / 100;
         }
 
         private void EffectsVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            _effectsVolume = EffectsVolumeSlider.Value;
-            // Логика изменения громкости эффектов. победа-проигрыш
+            AppSettings.EffectsVolume = EffectsVolumeSlider.Value / 100;
         }
         private void BoardSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

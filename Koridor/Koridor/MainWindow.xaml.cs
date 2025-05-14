@@ -11,11 +11,11 @@ using System.IO;
 using Newtonsoft.Json;
 using Formatting = Newtonsoft.Json.Formatting;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 
 namespace Koridor
 {
-
     public partial class MainWindow : Window
     {
         static int cols = 9;
@@ -43,13 +43,40 @@ namespace Koridor
         private bool isHorizontalWall = true;
         public List<(int x, int y, bool horizontal)> walls = new List<(int x, int y, bool horizontal)>();
 
-        bool isBotSelected = true;
+        bool isBotSelected = AppSettings.IsBotSelected;
         private Bot gameBot = new Bot();
 
         private DateTime gameStartTime;
         private int totalMoves = 0;
         private List<GameStats> gameHistory = new List<GameStats>();
 
+
+        private void PlayBackgroundMusic()
+        {
+            try
+            {
+                //string musicPath = "Sounds/C418_-_Subwoofer_Lullaby_30921632.mp3";
+                //string fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, musicPath);
+                // Используем относительный путь
+                string musicPath = System.IO.Path.Combine("Sounds", "C418_-_Subwoofer_Lullaby_30921632.mp3");
+                string fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, musicPath);
+
+                if (File.Exists(fullPath))
+                {
+                    BackgroundMusic.Source = new Uri(fullPath);
+                    BackgroundMusic.MediaEnded += (s, e) => BackgroundMusic.Position = TimeSpan.Zero; // Зацикливание
+                    BackgroundMusic.Play();
+                }
+                else
+                {
+                    MessageBox.Show($"Файл музыки не найден: {fullPath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка воспроизведения музыки: {ex.Message}");
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -58,6 +85,7 @@ namespace Koridor
             UpdateCurrentPlayerDisplay();
             DrawGrid();
             FillField();
+            PlayBackgroundMusic();
             canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
             canvas.MouseLeftButtonUp += Canvas_MouseLeftButtonUp;
             UpdateWallButtons();
@@ -798,6 +826,40 @@ namespace Koridor
             return false;
         }
 
+        private void PlayMoveSound()
+        {
+            try
+            {
+                string soundPath = System.IO.Path.Combine("Sounds", "negromkiy-korotkiy-klik.mp3");
+                string fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, soundPath);
+
+                if (File.Exists(fullPath))
+                {
+                    // Создаем новый MediaPlayer для звука перемещения
+                    var moveSoundPlayer = new MediaPlayer();
+
+                    // Устанавливаем громкость (от 0.0 до 1.0)
+                    moveSoundPlayer.Volume = 0.8;
+
+                    // Настраиваем воспроизведение
+                    moveSoundPlayer.Open(new Uri(fullPath));
+                    moveSoundPlayer.MediaEnded += (s, e) => {
+                        moveSoundPlayer.Close(); // Освобождаем ресурсы после проигрывания
+                    };
+
+                    moveSoundPlayer.Play();
+                }
+                else
+                {
+                    Debug.WriteLine($"Файл звука не найден: {fullPath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка воспроизведения звука: {ex.Message}");
+            }
+        }
+
         private void MoveChess(Chess chess, int endX, int endY)
         {
             totalMoves++;
@@ -824,54 +886,69 @@ namespace Koridor
                 }
             }
 
-            // Обновляем позицию фишки
-            chess.posX = endX;
-            chess.posY = endY;
+            // звук движения фишки
+            //try
+            //{
+            //    var soundUri = new Uri("pack://application:,,,/Sounds/negromkiy-korotkiy-klik.mp3");
+            //    var player = new MediaPlayer();
+            //    player.Open(soundUri);
+            //    player.Play();
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Ошибка воспроизведения: {ex.Message}");
+            //}
+            PlayMoveSound();
 
-            // Добавляем фишку в новую позицию
-            int newIndex = endY * cols + endX;
-            if (newIndex < canvas.Children.Count && canvas.Children[newIndex] is Canvas newCell)
-            {
-                Canvas.SetLeft(chess.red ? RedChessElp : BlueChessElp,
-                              (cellWidth - (chess.red ? RedChessElp.Width : BlueChessElp.Width)) / 2);
-                Canvas.SetTop(chess.red ? RedChessElp : BlueChessElp,
-                             (cellHeight - (chess.red ? RedChessElp.Height : BlueChessElp.Height)) / 2);
-                newCell.Children.Add(chess.red ? RedChessElp : BlueChessElp);
-            }
-        }
-        public List<(int x, int y)> GetAvailableMoves(int startX, int startY, bool include_state = true)
-        {
-            var possibleMoves = new List<(int x, int y)>();
-            var directions = new List<(int dx, int dy)> { (0, -1), (0, 1), (-1, 0), (1, 0) };
 
-            foreach (var (dx, dy) in directions)
-            {
-                int targetX = startX + dx;
-                int targetY = startY + dy;
+        // Обновляем позицию фишки
+        chess.posX = endX;
+                chess.posY = endY;
 
-                if (IsMoveValid(startX, startY, targetX, targetY))
+                // Добавляем фишку в новую позицию
+                int newIndex = endY * cols + endX;
+                if (newIndex < canvas.Children.Count && canvas.Children[newIndex] is Canvas newCell)
                 {
-                    // Если клетка занята фишкой - проверяем возможность прыжка
-                    if ((targetX == BlueChess.posX && targetY == BlueChess.posY) ||
-                        (targetX == RedChess.posX && targetY == RedChess.posY))
-                    {
-                        int jumpX = targetX + dx;
-                        int jumpY = targetY + dy;
-
-                        // Добавляем клетку после прыжка, если прыжок возможен
-                        if (IsMoveValid(targetX, targetY, jumpX, jumpY))
-                        {
-                            possibleMoves.Add((jumpX, jumpY));
-                        }
-                    }
-                    else
-                    {
-                        possibleMoves.Add((targetX, targetY));
-                    }
+                    Canvas.SetLeft(chess.red ? RedChessElp : BlueChessElp,
+                                  (cellWidth - (chess.red ? RedChessElp.Width : BlueChessElp.Width)) / 2);
+                    Canvas.SetTop(chess.red ? RedChessElp : BlueChessElp,
+                                 (cellHeight - (chess.red ? RedChessElp.Height : BlueChessElp.Height)) / 2);
+                    newCell.Children.Add(chess.red ? RedChessElp : BlueChessElp);
                 }
             }
+            public List<(int x, int y)> GetAvailableMoves(int startX, int startY, bool include_state = true)
+            {
+                var possibleMoves = new List<(int x, int y)>();
+                var directions = new List<(int dx, int dy)> { (0, -1), (0, 1), (-1, 0), (1, 0) };
 
-            return possibleMoves;
+                foreach (var (dx, dy) in directions)
+                {
+                    int targetX = startX + dx;
+                    int targetY = startY + dy;
+
+                    if (IsMoveValid(startX, startY, targetX, targetY))
+                    {
+                        // Если клетка занята фишкой - проверяем возможность прыжка
+                        if ((targetX == BlueChess.posX && targetY == BlueChess.posY) ||
+                            (targetX == RedChess.posX && targetY == RedChess.posY))
+                        {
+                            int jumpX = targetX + dx;
+                            int jumpY = targetY + dy;
+
+                            // Добавляем клетку после прыжка, если прыжок возможен
+                            if (IsMoveValid(targetX, targetY, jumpX, jumpY))
+                            {
+                                possibleMoves.Add((jumpX, jumpY));
+                            }
+                        }
+                        else
+                        {
+                            possibleMoves.Add((targetX, targetY));
+                        }
+                    }
+                }
+
+                return possibleMoves;
         }
 
 

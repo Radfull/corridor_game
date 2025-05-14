@@ -31,3 +31,6 @@ C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\De
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Statistic.baml
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Statistic.g.cs
 C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\bin\Debug\net8.0-windows\Newtonsoft.Json.dll
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\bin\Debug\net8.0-windows\Sounds\C418_-_Subwoofer_Lullaby_30921632.mp3
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\bin\Debug\net8.0-windows\Sounds\negromkiy-korotkiy-klik.mp3
+C:\Users\Honor\Desktop\Files\Подготовка\Koridor\Koridor\Koridor\obj\Debug\net8.0-windows\Koridor_Content.g.cs
