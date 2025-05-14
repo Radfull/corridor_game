@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace Koridor
 {
-    internal class Chess
+    public class Chess
     {
         public int posX { get; set; }
         public int posY { get; set; }
         public bool red { get; set; }
+        public int  WallsCount {get; set;}
 
         public Chess(int x, int y, bool color)
         {
             posX = x;
             posY = y;
             red = color;
+            WallsCount = 10;
         }
 
         public Chess() { }
