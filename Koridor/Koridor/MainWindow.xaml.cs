@@ -53,6 +53,7 @@ namespace Koridor
         {
             InitializeComponent();
             gameStartTime = DateTime.Now;
+            totalMoves = 0;
             UpdateCurrentPlayerDisplay();
             DrawGrid();
             FillField();
@@ -128,6 +129,7 @@ namespace Koridor
 
         private void AddWall(int x, int y, bool horizontal)
         {
+            totalMoves++;
             Rectangle wall = new Rectangle
             {
                 Fill = Brushes.Black,
@@ -756,7 +758,7 @@ namespace Koridor
                 int leftX = Math.Min(x1, x2);
                 return walls.Any(w =>
                     (w.x == leftX && w.y == y1 && !w.horizontal) ||
-                    (w.x == leftX && w.y == y1 - 1 && !w.horizontal) ); // Вертикальная стенка
+                    (w.x == leftX && w.y == y1 - 1 && !w.horizontal)); // Вертикальная стенка
             }
             // Вертикальное перемещение
             else if (x1 == x2)
@@ -772,6 +774,7 @@ namespace Koridor
 
         private void MoveChess(Chess chess, int endX, int endY)
         {
+            totalMoves++;
             // Проверка на прыжок через фишку
             if ((endX == BlueChess.posX && endY == BlueChess.posY) ||
                 (endX == RedChess.posX && endY == RedChess.posY))

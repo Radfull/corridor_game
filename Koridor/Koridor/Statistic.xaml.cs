@@ -14,12 +14,6 @@ namespace Koridor
             StatsDataGrid.ItemsSource = stats.OrderByDescending(s => s.GameDate).ToList();
         }
 
-        void StatisticsButtonClick(object sender, RoutedEventArgs e)
-        {
-            StatisticWindow statisticWindow = new StatisticWindow();
-            statisticWindow.Show();
-        }
-
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
