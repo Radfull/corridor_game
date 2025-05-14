@@ -1,15 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "sF8J4T4PM+g=",
+  "dgSpecHash": "jLgg16wq8k0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Honor\\Desktop\\Files\\Подготовка\\Koridor\\Koridor\\Koridor\\Koridor.csproj",
+  "projectFilePath": "C:\\Users\\User\\Source\\Repos\\corridor_game3\\Koridor\\Koridor\\Koridor.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Honor\\.nuget\\packages\\quikgraph\\2.5.0\\quikgraph.2.5.0.nupkg.sha512",
-    "C:\\Users\\Honor\\.nuget\\packages\\microsoft.net.sdk.compilers.toolset\\9.0.102\\microsoft.net.sdk.compilers.toolset.9.0.102.nupkg.sha512",
-    "C:\\Users\\Honor\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.12\\microsoft.windowsdesktop.app.ref.8.0.12.nupkg.sha512",
-    "C:\\Users\\Honor\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.12\\microsoft.netcore.app.ref.8.0.12.nupkg.sha512",
-    "C:\\Users\\Honor\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.12\\microsoft.aspnetcore.app.ref.8.0.12.nupkg.sha512",
-    "C:\\Users\\Honor\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.12\\microsoft.netcore.app.host.win-x64.8.0.12.nupkg.sha512"
+    "C:\\Users\\User\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\User\\.nuget\\packages\\quikgraph\\2.5.0\\quikgraph.2.5.0.nupkg.sha512"
   ],
   "logs": []
 }
